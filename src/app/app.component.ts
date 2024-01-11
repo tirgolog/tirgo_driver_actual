@@ -186,10 +186,10 @@ export class AppComponent {
     });
   }
 
-  //Запускается при запуске приложения
-  // public async initGeolocation(){
-  //   return this.geolocation.getCurrentPosition();
-  // }
+  // Запускается при запуске приложения
+  public async initGeolocation(){
+    return this.geolocation.getCurrentPosition();
+  }
 
   //Push уведомлеения
   public async initPushNotifications(){
