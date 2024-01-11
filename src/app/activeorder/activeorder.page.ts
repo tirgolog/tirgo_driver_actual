@@ -29,7 +29,9 @@ export class ActiveorderPage implements OnInit {
 
   ngOnInit() {
     this.item = this.authService.activeorder;
-    this.item.transport_types = JSON.parse(this.item.transport_types)
+    this.item.transport_types = JSON.parse(this.item.transport_types);
+    console.log(this.item)
+    console.log(this.item.transport_types)
   }
   async finishOrder(item) {
     const alert = await this.alertController.create({
@@ -88,7 +90,7 @@ export class ActiveorderPage implements OnInit {
               }
             }).catch(async (err) => {
               this.loading.dismiss();
-              //this.authService.alert('Ошибка','Для завершения заказа нам нужно знать вашу геопозицию. Пожалуйста включите разрешение на использование местоположения в приложении Tirgo Driver')
+              this.authService.alertLocation('Упс','Для завершения заказа нам нужно знать вашу геопозицию. Пожалуйста включите разрешение на использование местоположения в приложении Tirgo Driver')
             });
           }
         }

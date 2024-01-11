@@ -47,7 +47,7 @@ export class OrderPage implements OnInit {
     this.loading.present();
     this.geolocation.getCurrentPosition(
       {
-        maximumAge: 1000, timeout: 3000,
+        maximumAge: 1000, timeout: 5000,
         enableHighAccuracy: true
       }
     )
