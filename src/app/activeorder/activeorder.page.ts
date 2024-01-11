@@ -54,7 +54,12 @@ export class ActiveorderPage implements OnInit {
               message: 'Завершаем заказ',
             });
             this.loading.present();
-            this.geolocation.getCurrentPosition().then(async (resp) => {
+            this.geolocation.getCurrentPosition(
+              {
+                maximumAge: 1000, timeout: 5000,
+                enableHighAccuracy: true
+              }
+            ).then(async (resp) => {
               let res: any;
               if (item.isMerchant) {
                 res = await this.authService.finishMerchantOrder(this.authService.activeorder.id, resp.coords.latitude.toString(), resp.coords.longitude.toString(), item.route?.to_city).toPromise();

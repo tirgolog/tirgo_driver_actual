@@ -1443,7 +1443,6 @@ The function is passed a single string parameter containing the error message.
 cordova.plugins.diagnostic.getLocationAuthorizationStatuses(function(statuses){
     console.log("FINE permission status: " + statuses[cordova.plugins.diagnostic.permission.ACCESS_FINE_LOCATION])
     console.log("COARSE permission status: " + statuses[cordova.plugins.diagnostic.permission.ACCESS_COARSE_LOCATION])
-    console.log("BACKGROUND permission status: " + statuses[cordova.plugins.diagnostic.permission.ACCESS_BACKGROUND_LOCATION])
 }, function(error){
     console.error(error);
 });
@@ -3704,8 +3703,6 @@ You can add these permissions either by manually editing the AndroidManifest.xml
     <platform name="android">
         <plugin name="cordova-custom-config" version="*"/>
         <custom-config-file target="AndroidManifest.xml" parent="/*">
-            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
         </custom-config-file>
     </platform>
 
@@ -3725,7 +3722,6 @@ This plugin supports [checking](#getpermissionauthorizationstatus) and [requesti
 The plugin defines all [dangerous permissions](http://developer.android.com/guide/topics/security/permissions.html#perm-groups) available up to API 33 as a list of constants available via the `cordova.plugins.diagnostic.permission` object. The following permissions are available:
 
 - `cordova.plugins.diagnostic.permission.ACCEPT_HANDOVER`
-- `cordova.plugins.diagnostic.permission.ACCESS_BACKGROUND_LOCATION`
 - `cordova.plugins.diagnostic.permission.ACCESS_COARSE_LOCATION`
 - `cordova.plugins.diagnostic.permission.ACCESS_FINE_LOCATION`
 - `cordova.plugins.diagnostic.permission.ACCESS_MEDIA_LOCATION`

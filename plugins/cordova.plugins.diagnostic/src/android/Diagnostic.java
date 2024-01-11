@@ -89,8 +89,6 @@ public class Diagnostic extends CordovaPlugin{
         Map<String, String> _permissionsMap = new HashMap <String, String>();
 
         // API 1-22+
-        Diagnostic.addBiDirMapEntry(_permissionsMap, "ACCESS_COARSE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION");
-        Diagnostic.addBiDirMapEntry(_permissionsMap, "ACCESS_FINE_LOCATION", "android.permission.ACCESS_FINE_LOCATION");
         Diagnostic.addBiDirMapEntry(_permissionsMap, "ADD_VOICEMAIL", "android.permission.ADD_VOICEMAIL");
         Diagnostic.addBiDirMapEntry(_permissionsMap, "BODY_SENSORS", "android.permission.BODY_SENSORS");
         Diagnostic.addBiDirMapEntry(_permissionsMap, "CALL_PHONE", "android.permission.CALL_PHONE");
@@ -122,7 +120,6 @@ public class Diagnostic extends CordovaPlugin{
         Diagnostic.addBiDirMapEntry(_permissionsMap, "ACCEPT_HANDOVER", "android.permission.ACCEPT_HANDOVER");
 
         // API 29+
-        Diagnostic.addBiDirMapEntry(_permissionsMap, "ACCESS_BACKGROUND_LOCATION", "android.permission.ACCESS_BACKGROUND_LOCATION");
         Diagnostic.addBiDirMapEntry(_permissionsMap, "ACCESS_MEDIA_LOCATION", "android.permission.ACCESS_MEDIA_LOCATION");
         Diagnostic.addBiDirMapEntry(_permissionsMap, "ACTIVITY_RECOGNITION", "android.permission.ACTIVITY_RECOGNITION");
 
