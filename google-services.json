@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "592382112226",
+    "project_id": "denis-tirgo",
+    "storage_bucket": "denis-tirgo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:592382112226:android:db3d553610136915fb89bb",
+        "android_client_info": {
+          "package_name": "io.tirgo.drive"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5shqWV9lfVNiIWV6WBrdcECkuJF_j2Zs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
