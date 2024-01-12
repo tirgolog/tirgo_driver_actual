@@ -267,7 +267,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 component-inherit
 
-cordova-plugin-fcm-with-dependecy-updated
 MIT
 
 date-fns

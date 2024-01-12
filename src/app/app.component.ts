@@ -10,7 +10,6 @@ import { User } from "./user";
 import { PushService } from "./services/push.service";
 import { SocketService } from "./services/socket.service";
 import { Network } from "@ionic-native/network/ngx";
-import { FCM } from "cordova-plugin-fcm-with-dependecy-updated/ionic/ngx"
 import axios from 'axios';
 
 @Component({
@@ -31,7 +30,6 @@ export class AppComponent {
     public alertController: AlertController,
     private router: Router,
     private geolocation: Geolocation,
-    private fcm: FCM,
   ) {
     this.router.navigate(['loading'])
     this.initializeApp();

@@ -1,4 +1,3 @@
-cordova.define("cordova-plugin-fcm-with-dependecy-updated.FCMPlugin", function(require, exports, module) {
 'use strict';
 
 
