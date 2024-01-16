@@ -300,6 +300,14 @@ export class AuthenticationService {
     });
     return this.http.post<any>(sUrl, body);
   }
+  delUser(userid: number) {
+    const sUrl = API_URL + '/users/delUser';
+    const body = JSON.stringify({
+      userid: userid
+    });
+    return this.http.post<any>(sUrl, body);
+  }
+  
   getContacts() {
     const sUrl = API_URL + '/users/getContacts';
     return this.http.get<any>(sUrl)

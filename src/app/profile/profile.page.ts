@@ -434,10 +434,15 @@ export class ProfilePage implements OnInit {
                     text: 'Удалить',
                     role: 'destructive',
                     handler: async () => {
-                        await alert.present();
-                        await this.storage.clear();
-                        await this.authService.logout();
-                        await this.router.navigate(['selectlanguage'], { replaceUrl: true });
+                        const res = await this.authService.delUser(this.authService.currentUser.id).toPromise()
+                        if (res.status) {
+                            await alert.present();
+                            await this.storage.clear();
+                            await this.authService.logout();
+                            await this.router.navigate(['selectlanguage'], { replaceUrl: true });
+                        } else {
+                            this.authService.alert('Ошибка', res.error)
+                        }
                     }
                 }
             ],

@@ -267,8 +267,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 component-inherit
 
-MIT
-
 date-fns
 MIT
 # License
