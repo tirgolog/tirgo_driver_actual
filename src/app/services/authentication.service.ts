@@ -66,6 +66,9 @@ export class AuthenticationService {
   goToSupport() {
     this.iab.create('https://t.me/tirgosupportbot', '_system');
   }
+  goToSupportAdmin() {
+    this.iab.create('https://t.me/mirzoboburme', '_system');
+  }
   addLeadingZeros(num: number) {
     return String(num).padStart(6, '0');
   }
