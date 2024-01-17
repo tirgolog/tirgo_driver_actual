@@ -27,25 +27,27 @@
           заказов' | translate}}</button>
         <button (click)="goTo('/balance/',false)"><ion-icon src="assets/img/balans.svg"></ion-icon>{{'Мой баланс' |
           translate}}</button>
-        <!--<button (click)="updateLocation()">
+        <!--
+          <button (click)="updateLocation()">
           <ion-icon name="navigate-circle-outline"></ion-icon>
           <span class="location-detect">
             {{'Обновить геолокацию' | translate}} <br>
             <small>{{authService.cityinfo}}</small>
           </span>
-        </button>-->
+        </button>
         <button (click)="goTo('/support/',false)">
           <ion-icon src="assets/img/chat.svg"></ion-icon>{{'Служба поддержки' | translate}}
+        </button>
+        -->
+        <button (click)="authService.goToSupport()">
+          <ion-icon src="assets/img/support.svg"></ion-icon>{{'Служба поддержки' | translate}}
+        </button>
+        <button (click)="authService.goToSupportAdmin()">
+          <ion-icon src="assets/img/tg.svg"></ion-icon>{{'Дополнительные услуги' | translate}}
         </button>
         <button (click)="goTo('/selectlanguageauth/',false)">
           <ion-icon src="assets/img/language.svg"></ion-icon>
           {{'Язык интерфейса' | translate}}
-        </button>
-        <button (click)="authService.goToSupport()">
-          <ion-icon src="assets/img/tg.svg"></ion-icon>{{'Telegram' | translate}}
-        </button>
-        <button (click)="authService.goToSupportAdmin()">
-          <ion-icon src="assets/img/tg.svg"></ion-icon>{{'Таможенная анкета' | translate}}
         </button>
         <button (click)="selectStatus()">
           <ion-icon src="assets/img/status.svg"></ion-icon>

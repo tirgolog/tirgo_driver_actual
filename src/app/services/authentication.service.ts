@@ -67,7 +67,7 @@ export class AuthenticationService {
     this.iab.create('https://t.me/tirgosupportbot', '_system');
   }
   goToSupportAdmin() {
-    this.iab.create('https://t.me/mirzoboburme', '_system');
+    this.iab.create('https://t.me/TIRGO_STOL_USLUG', '_system');
   }
   addLeadingZeros(num: number) {
     return String(num).padStart(6, '0');
