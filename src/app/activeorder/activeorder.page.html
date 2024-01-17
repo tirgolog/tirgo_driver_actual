@@ -65,10 +65,6 @@
           <td>{{'Контакты' | translate}}</td>
           <td>+{{item.userphoneorder}}</td>
         </tr>
-        <tr *ngIf="item.merchant?.phoneNumbers[0]">
-          <td>{{'Контакты' | translate}}</td>
-          <td>+{{item.merchant?.phoneNumbers[0]}}</td>
-        </tr>
       </tbody>
     </table>
     <button class="get-order-btn order-succes-btn" (click)="callMan(item.userphoneorder)">{{'Позвонить' |
