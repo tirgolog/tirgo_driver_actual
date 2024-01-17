@@ -66,6 +66,9 @@ export class AuthenticationService {
   goToSupport() {
     this.iab.create('https://t.me/tirgosupportbot', '_system');
   }
+  goToSupportAdmin() {
+    this.iab.create('https://t.me/TIRGO_STOL_USLUG', '_system');
+  }
   addLeadingZeros(num: number) {
     return String(num).padStart(6, '0');
   }
@@ -297,6 +300,14 @@ export class AuthenticationService {
     });
     return this.http.post<any>(sUrl, body);
   }
+  delUser(userid: number) {
+    const sUrl = API_URL + '/users/delUser';
+    const body = JSON.stringify({
+      userid: userid
+    });
+    return this.http.post<any>(sUrl, body);
+  }
+  
   getContacts() {
     const sUrl = API_URL + '/users/getContacts';
     return this.http.get<any>(sUrl)
