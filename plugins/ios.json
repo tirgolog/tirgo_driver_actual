@@ -41,6 +41,9 @@
     "cordova-plugin-statusbar": {
       "PACKAGE_NAME": "io.tirgo.drive"
     },
+    "cordova.plugins.diagnostic": {
+      "PACKAGE_NAME": "io.tirgo.drive"
+    },
     "mx.ferreyra.callnumber": {
       "PACKAGE_NAME": "io.tirgo.drive"
     },

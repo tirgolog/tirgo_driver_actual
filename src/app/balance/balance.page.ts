@@ -54,9 +54,15 @@ export class BalancePage implements OnInit {
   async withdrawFromActivebalance() {
     if(this.authService.currentUser.balance > 0) {
       this.authService.withdrawBalance(this.authService.currentUser.id).subscribe((res: any) => {
-        if(res) {
+        if(res.status) {
           this.payConfirm = true;
         }
+        else if(!res.status && res.error == 'No enough balance') {
+           this.authService.alert('Ошибка','У вас нет активного баланса')
+        }
+        else if(!res.status && res.error == 'No enough balance') {
+          this.authService.alert('Ошибка',res.error.toString());
+       }
       });
     } else {
       await this.authService.alert('Ошибка','У вас нет активного баланса')
