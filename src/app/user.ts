@@ -22,6 +22,9 @@ export class User {
     public config: any;
     public driver_verification: any;
     public send_verification: any;
+    public to_subscription:any;
+    public subscription_id: any;
+    public issubscription: any;
     constructor(user: any) {
         this.id = +user.id;
         this.name = user.name;
@@ -46,5 +49,9 @@ export class User {
         this.config = user.config;
         this.driver_verification = user.driver_verification
         this.send_verification = user.send_verification
+        this.to_subscription = user.to_subscription
+        this.subscription_id = user.subscription_id
+        this.issubscription = user.issubscription
+        this.phone = user.phone
     }
 }

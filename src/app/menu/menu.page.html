@@ -5,6 +5,7 @@
         <img class="avatar" [src]="authService.currentUser?.avatar" alt="">
         <div class="menu-head-right">
           <h3>{{authService.currentUser?.name}}</h3>
+
           <div class="menu-head-right-row">
             <div class="menu-rate">
               <img src="assets/img/Star.svg" alt="">
@@ -16,6 +17,9 @@
           </div>
           <button class="my-profile" (click)="goTo('/tabs/profile/',true)">{{'Мой профиль' | translate}} <img
               src="assets/img/Edit.svg" alt=""></button>
+          <small *ngIf="authService.currentUser?.issubscription" class="status-text" style="display: block;margin: 5px 0;">
+            Подписка до: <b>{{authService.currentUser?.to_subscription  | date : 'dd.MM.YYYY'}}</b>
+          </small>
           <small class="status-text"><b>{{returnStatusName()}}</b></small>
         </div>
       </div>

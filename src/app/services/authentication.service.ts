@@ -10,6 +10,7 @@ import { FileTransfer, } from "@ionic-native/file-transfer/ngx";
 import { InAppBrowser } from "@ionic-native/in-app-browser/ngx";
 import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
+import { Router } from '@angular/router';
 
 const TOKEN_KEY = 'jwttirgotoken';
 const API_URL = 'https://admin.tirgo.io/api';
@@ -60,14 +61,19 @@ export class AuthenticationService {
     public transfer: FileTransfer,
     private geolocation: Geolocation,
     public diagnostic: Diagnostic,
-    public platform: Platform
+    public platform: Platform,
+    public router: Router
   ) {
   }
   goToSupport() {
     this.iab.create('https://t.me/tirgosupportbot', '_system');
   }
   goToSupportAdmin() {
-    this.iab.create('https://t.me/TIRGO_STOL_USLUG', '_system');
+    if(!this.currentUser.to_subscription) {
+      this.alertSubscription('Необходимо подключить подписку для этой услуги', '')
+    }else {
+      this.iab.create('https://t.me/TIRGO_STOL_USLUG', '_system');
+    }
   }
   addLeadingZeros(num: number) {
     return String(num).padStart(6, '0');
@@ -458,6 +464,22 @@ export class AuthenticationService {
     await alert.present();
   }
 
+  async alertSubscription(header: string, text: string) {
+    const alert = await this.alertController.create({
+      header: header,
+      message: text,
+      cssClass: 'customAlert',
+      buttons: [{
+        text: 'Подключить',
+        handler: async () => {
+          // this.iab.create('https://t.me/TIRGO_STOL_USLUG', '_system');
+          this.router.navigate(['/addsubscribe']);
+        }
+      }]
+    });
+    await alert.present();
+  }
+
   async alertLocation(header: string, text: string) {
     const alert = await this.alertController.create({
       header: header,
@@ -598,5 +620,13 @@ export class AuthenticationService {
       },
       ]
     }).then(res => res.present())
+  }
+
+  getSubscribtionsPrice() {
+    const sUrl = API_URL + '/users/subscription';
+    return this.http.get<any>(sUrl);
+  }
+  addSubscription(data) {
+    return this.http.post(API_URL + '/users/addDriverSubscription',data)
   }
 }

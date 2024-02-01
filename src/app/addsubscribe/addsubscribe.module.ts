@@ -4,25 +4,20 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { ProfilePageRoutingModule } from './profile-routing.module';
-
-import { ProfilePage } from './profile.page';
 import {HeaderPageModule} from "../header/header.module";
-import {NgxMaskIonicModule} from "ngx-mask-ionic";
-import {MainPipeModule} from "../pipes/main-pipe.module";
 import {TranslateModule} from "@ngx-translate/core";
+import { AddSubscribeRoutingModule } from './addsubscribe-routing.module';
+import { AddSubscribePage } from './addsubscribe.page';
 
 @NgModule({
     imports: [
         CommonModule,
         FormsModule,
         IonicModule,
-        ProfilePageRoutingModule,
+        AddSubscribeRoutingModule,
         HeaderPageModule,
-        NgxMaskIonicModule,
-        MainPipeModule,
         TranslateModule,
     ],
-  declarations: [ProfilePage]
+  declarations: [AddSubscribePage]
 })
-export class ProfilePageModule {}
+export class AddSubscribeModule {}
