@@ -136,6 +136,10 @@ const routes: Routes = [
     path: 'verification',
     loadChildren: () => import('./verification/verification.module').then(m => m.VerificationPageModule)
   },
+  {
+    path: 'addsubscribe',
+    loadChildren: () => import('./addsubscribe/addsubscribe.module').then(m => m.AddSubscribeModule)
+  },
 
 ];
 @NgModule({
