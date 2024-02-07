@@ -23,6 +23,6 @@ import {TranslateModule} from "@ngx-translate/core";
         MainPipeModule,
         TranslateModule,
     ],
-  declarations: [ProfilePage]
+  declarations: [ProfilePage],
 })
 export class ProfilePageModule {}

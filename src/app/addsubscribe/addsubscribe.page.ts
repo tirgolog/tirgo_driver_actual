@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { log } from 'console';
 import { AuthenticationService } from '../services/authentication.service';
 import { Router } from '@angular/router';
+import { SocketService } from '../services/socket.service';
 
 @Component({
   selector: 'app-addsubscribe',
@@ -12,7 +13,10 @@ export class AddSubscribePage implements OnInit {
   loading: boolean = false;
   priceCards = [];
   selectedPrice: any;
-  constructor(private authService: AuthenticationService,private router: Router) { }
+  constructor(
+    private authService: AuthenticationService,
+    private router: Router,
+    private socket: SocketService) { }
   ngOnInit(): void {
     this.getPrice();
   }
@@ -39,21 +43,25 @@ export class AddSubscribePage implements OnInit {
     }
     this.authService.addSubscription(data).subscribe((res: any) => {
       if (res.status) {
+        this.authService.checkSession().subscribe((res:any) => {
+          this.authService.currentUser.balance = res.user.balance;
+        });
         this.loading = false;
-        this.authService.alert('Подписка успешно оформлена !', '')
+        this.authService.alert('Подписка успешно оформлена !', '');
+        this.router.navigate(['/tabs/home']);
       }
       else {
         this.loading = false;
-        this.authService.alert('Error', '');
+        this.authService.alert('Ошибка', '');
       };
-    },error => {
-      if(error.error.error == 'Недостаточно средств на балансе') {
+    }, error => {
+      if (error.error.error == 'Недостаточно средств на балансе') {
         this.loading = false;
         this.authService.alert('Недостаточно средств на балансе', 'Пополните пожалуйста баланс ');
         this.router.navigate(['/balance']);
-      }else {
+      } else {
         this.loading = false;
-        this.authService.alert('Error', '');
+        this.authService.alert('Ошибка', '');
       }
     })
   }

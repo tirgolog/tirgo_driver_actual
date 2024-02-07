@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import {AlertController, MenuController, ModalController} from "@ionic/angular";
-import {Router} from "@angular/router";
-import {Storage} from "@ionic/storage";
-import {AuthenticationService} from "../services/authentication.service";
-import {Geolocation} from "@awesome-cordova-plugins/geolocation/ngx";
+import { AlertController, MenuController, ModalController } from "@ionic/angular";
+import { Router } from "@angular/router";
+import { Storage } from "@ionic/storage";
+import { AuthenticationService } from "../services/authentication.service";
+import { Geolocation } from "@awesome-cordova-plugins/geolocation/ngx";
 import axios from "axios";
-import {ChoiceCityPage} from "../choice-city/choice-city.page";
-import {SelectstatusPage} from "../selectstatus/selectstatus.page";
+import { ChoiceCityPage } from "../choice-city/choice-city.page";
+import { SelectstatusPage } from "../selectstatus/selectstatus.page";
 import { User } from '../user';
+import { InAppBrowser } from "@ionic-native/in-app-browser/ngx";
+import { log } from 'console';
 
 @Component({
   selector: 'app-menu',
@@ -15,8 +17,8 @@ import { User } from '../user';
   styleUrls: ['./menu.page.scss'],
 })
 export class MenuPage implements OnInit {
-  modalExit:boolean = false;
-  driver_verification:number
+  modalExit: boolean = false;
+  driver_verification: number
   constructor(
     public alertController: AlertController,
     private menu: MenuController,
@@ -24,12 +26,14 @@ export class MenuPage implements OnInit {
     private geolocation: Geolocation,
     private modalController: ModalController,
     private router: Router,
-    public authService:AuthenticationService
+    public authService: AuthenticationService,
+    private iab: InAppBrowser,
   ) { }
 
   ngOnInit() {
+
   }
-  async logOut(){
+  async logOut() {
     this.menu.toggle();
     //this.modalExit = true;
     const alert = await this.alertController.create({
@@ -55,41 +59,41 @@ export class MenuPage implements OnInit {
     });
     await alert.present();
   }
-  async closeModal(){
+  async closeModal() {
     this.modalExit = false;
   }
-  returnStatusName(){
+  returnStatusName() {
     const index = this.authService.statuses.findIndex(e => e.status_id === this.authService.currentUser.busy)
-    if (index>=0){
+    if (index >= 0) {
       return this.authService.statuses[index].name
     }
   }
-  async logOutFull(){
+  async logOutFull() {
     await this.storage.clear();
     await this.authService.logout();
     await this.closeModal()
-    await this.router.navigate(['selectlanguage'], {replaceUrl: true});
+    await this.router.navigate(['selectlanguage'], { replaceUrl: true });
   }
-  async goTo(page:string,replace:boolean){
-    await this.router.navigate([page], {replaceUrl: replace});
+  async goTo(page: string, replace: boolean) {
+    await this.router.navigate([page], { replaceUrl: replace });
     await this.menu.toggle();
   }
-  updateLocation(){
+  updateLocation() {
     this.geolocation.getCurrentPosition().then(async (resp) => {
-      await this.authService.updateLocation(resp.coords.latitude.toString(),resp.coords.longitude.toString()).toPromise();
-      const get = "https://geocode-maps.yandex.ru/1.x/?format=json&geocode=" + resp.coords.longitude.toString() + "," + resp.coords.latitude.toString() + "&apikey="+ this.authService.currentUser?.config.key_api_maps+"&lang=ru-RU"
+      await this.authService.updateLocation(resp.coords.latitude.toString(), resp.coords.longitude.toString()).toPromise();
+      const get = "https://geocode-maps.yandex.ru/1.x/?format=json&geocode=" + resp.coords.longitude.toString() + "," + resp.coords.latitude.toString() + "&apikey=" + this.authService.currentUser?.config.key_api_maps + "&lang=ru-RU"
       axios.get(get)
-          .then( res => {
-            if (res.status){
-              this.authService.cityinfo = res.data.response.GeoObjectCollection.featureMember[0].GeoObject.description;
-            }
-          })
-          .catch(async(error) => {
-            await this.authService.alert('Ошибка','Для завершения заказа нам нужно знать вашу геопозицию. Пожалуйста включите разрешение на использование местоположения в приложении Tirgo Driver')
-          });
+        .then(res => {
+          if (res.status) {
+            this.authService.cityinfo = res.data.response.GeoObjectCollection.featureMember[0].GeoObject.description;
+          }
+        })
+        .catch(async (error) => {
+          await this.authService.alert('Ошибка', 'Для завершения заказа нам нужно знать вашу геопозицию. Пожалуйста включите разрешение на использование местоположения в приложении Tirgo Driver')
+        });
     })
   }
-  async selectStatus(){
+  async selectStatus() {
     const modal = await this.modalController.create({
       component: SelectstatusPage,
       swipeToClose: true,
@@ -102,5 +106,15 @@ export class MenuPage implements OnInit {
       mode: 'ios',
     });
     await modal.present();
+  }
+
+  async goToSupportAdmin() {
+    if (!this.authService.currentUser.to_subscription) {
+      this.authService.alertSubscription('Необходимо подключить подписку для этой услуги', '')
+      await this.menu.toggle();
+    } else {
+      this.iab.create('https://t.me/TIRGO_STOL_USLUG', '_system');
+      await this.menu.toggle();
+    }
   }
 }
