@@ -25,6 +25,7 @@
     "@awesome-cordova-plugins/geolocation": "^6.2.0",
     "@awesome-cordova-plugins/push": "^6.2.0",
     "@ionic-native/call-number": "^5.36.0",
+    "@ionic-native/camera": "^5.36.0",
     "@ionic-native/core": "^5.36.0",
     "@ionic-native/diagnostic": "^5.36.0",
     "@ionic-native/fcm": "^5.36.0",
