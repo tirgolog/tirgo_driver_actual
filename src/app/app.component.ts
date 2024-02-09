@@ -72,6 +72,7 @@ export class AppComponent {
     await this.authService.checkSession().toPromise().then(async (res) => {
       if (res.status) {
         this.authService.currentUser = new User(res.user);
+        console.log(this.authService.currentUser);
         if (!this.authService.isAuthenticated()) {
           this.authService.authenticationState.next(true);
         }

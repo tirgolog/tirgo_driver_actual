@@ -20,9 +20,26 @@ export class NotifyPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.checkSession()
   }
   back() {
     this.navCtrl.back()
+  }
+
+  async checkSession() {
+    await this.authService.checkSession().toPromise().then(async (res) => {
+      if (res.status) {
+        console.log(res.user)
+        this.authService.currentUser = new User(res.user);
+  
+      } else {
+        this.authService.authenticationState.next(false);
+        await this.router.navigate(['selectlanguage'], { replaceUrl: true });
+      }
+    }).catch(async (err) => {
+      this.authService.authenticationState.next(false);
+      await this.router.navigate(['selectlanguage'], { replaceUrl: true });
+    })
   }
   async viewNotify(id: number) {
     await this.router.navigate(['/notify/notifyview/' + id]);

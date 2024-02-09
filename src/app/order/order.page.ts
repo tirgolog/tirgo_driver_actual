@@ -95,7 +95,7 @@ export class OrderPage implements OnInit {
   }
 
   async acceptOrderFinal() {
-    if (this.item.secure_transaction && !this.authService.currentUser?.driver_verification) {
+    if (this.item.secure_transaction && !this.authService.currentUser?.driver_verification && !this.authService.currentUser?.send_verification) {
       const actionSheet = await this.alertController.create({
         header: 'Вы должны идентифицироваться чтобы иметь возможность  совершать “Безопасеые сделки',
         cssClass: 'custom-alert',
