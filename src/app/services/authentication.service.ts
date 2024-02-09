@@ -13,7 +13,7 @@ import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { Router } from '@angular/router';
 
 const TOKEN_KEY = 'jwttirgotoken';
-const API_URL = 'https://admin.tirgo.io/api';
+const API_URL = 'http://localhost:7790';
 
 declare var cordova: any;
 
@@ -23,7 +23,7 @@ declare var cordova: any;
 export class AuthenticationService {
   authenticationState = new BehaviorSubject({});
   geolocationCheck: boolean;
-  public API_URL: string = 'https://admin.tirgo.io/api';
+  public API_URL: string = 'http://localhost:7790';
   public currentUser: User | undefined;
   public viewintro: boolean = false
   static jwt: any;
