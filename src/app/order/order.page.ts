@@ -7,7 +7,6 @@ import axios from "axios";
 import { Geolocation } from "@awesome-cordova-plugins/geolocation/ngx";
 import { AddtransportPage } from '../addtransport/addtransport.page';
 import { Router } from '@angular/router';
-import { log } from 'console';
 
 @Component({
   selector: 'app-order',

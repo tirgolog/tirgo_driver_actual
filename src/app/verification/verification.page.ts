@@ -1,10 +1,10 @@
 import { Component, NgZone, OnInit } from '@angular/core';
-import { AlertController, IonicSafeString, LoadingController, NavController } from '@ionic/angular';
+import { AlertController, LoadingController, NavController } from '@ionic/angular';
 import { AuthenticationService } from '../services/authentication.service';
-import { FileTransferObject, FileUploadOptions } from '@ionic-native/file-transfer/ngx';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { FilePicker } from '@capawesome/capacitor-file-picker';
 
 @Component({
   selector: 'app-verification',
@@ -100,11 +100,9 @@ export class VerificationPage implements OnInit {
       this.sendSms()
     });
   }
-
   public getJSONFromLocal(): Observable<any> {
     return this.http.get("./assets/json/code.json");
   }
-
   getCountryCode(phoneNumber: string): string | null {
     const numericPhoneNumber = phoneNumber.replace(/\D/g, '');
     for (const country of this.countries) {
@@ -125,8 +123,6 @@ export class VerificationPage implements OnInit {
 
     return null;
   }
-
-
   async sendSms() {
     await this.authService.driverVerification(this.phone, this.country_code).toPromise()
       .then(async (res) => {
@@ -147,7 +143,6 @@ export class VerificationPage implements OnInit {
         this.error = true;
       });
   }
-
   async verifyCode() {
     await this.authService.verifyCodeDriver(this.phone, this.code).toPromise()
       .then(async (res) => {
@@ -165,8 +160,6 @@ export class VerificationPage implements OnInit {
         this.error = true;
       });
   }
-
-
   returnNameTypeTransport(type: number) {
     const index = this.authService.typetruck.findIndex(e => +e.id === +type)
     if (index >= 0) {
@@ -175,7 +168,6 @@ export class VerificationPage implements OnInit {
       return 'Не выбрано'
     }
   }
-
   async selectTypeTransport() {
     const alert = await this.alertController.create({
       header: 'Выберите тип транспорта',
@@ -200,239 +192,245 @@ export class VerificationPage implements OnInit {
     });
     await alert.present();
   }
+  async uploadFile(type) {
+    const result = await FilePicker.pickImages({ readData: true });
+    const file: any = result.files[0].data;
 
+    const fileName = new Date().getTime() + '.jpeg';
+    await this.authService.uploadFile(fileName,file,'verification').then((res) => {
+      if (res) {
+        if (type == 'selfies_with_passport') {
+          this.formData.selfies_with_passport = res?.file?.filename
+        }
+        if (type == 'transport_front_photo') {
+          this.formData.transport_front_photo = res?.file?.filename
+        }
+        if (type == 'transport_back_photo') {
+          this.formData.transport_back_photo = res?.file?.filename
+        }
+        if (type == 'transport_side_photo') {
+          this.formData.transport_side_photo = res?.file?.filename
+        }
+        if (type == 'adr_photo') {
+          this.formData.adr_photo = res?.file?.filename
+        }
+        if (type == 'driver_license') {
+          this.formData.driver_license = res?.file?.filename
+        }
+        if (type == 'transportation_license_photo') {
+          this.formData.transportation_license_photo = res?.file?.filename
+        }
+        if (type == 'techpassport_photo1') {
+          this.formData.techpassport_photo1 = res?.file?.filename;
+          this.stepper++;
+        }
+        if (type == 'techpassport_photo2') {
+          this.formData.techpassport_photo2 = res?.file?.filename;
+        }
+      }
+    });
+  }
+  
   async addFilesLicense() {
     this.loading = await this.loadingCtrl.create({
       message: 'Отгружаем фото',
       cssClass: 'custom-loading'
     });
-    await this.authService.camera.getPicture(this.authService.optionsCamera).then(async (imageData: any) => {
-      this.loading.present()
-      const fileTransfer: FileTransferObject = await this.authService.transfer.create();
-      const headers = { 'Authorization': 'Bearer ' + AuthenticationService.jwt };
-      const uploadOpts: FileUploadOptions = {
-        headers: headers,
-        fileKey: 'file',
-        mimeType: "image/*",
-        chunkedMode: false,
-        fileName: imageData.substr(imageData.lastIndexOf('/') + 1)
-      };
-      uploadOpts.params = { typeUser: 'driver', typeImage: 'verification' };
-      const res = JSON.parse((await fileTransfer.upload(imageData, this.authService.API_URL + '/users/uploadImage', uploadOpts)).response)
-      if (res.status) {
-        this.formData.transportation_license_photo = res?.file?.filename
-        this.license_files.push(res.file)
-        this.loading.dismiss();
-      }
-    })
+    // await this.authService.camera.getPicture(this.authService.optionsCamera).then(async (imageData: any) => {
+    //   this.loading.present()
+    //   const fileTransfer: FileTransferObject = await this.authService.transfer.create();
+    //   const headers = { 'Authorization': 'Bearer ' + AuthenticationService.jwt };
+    //   const uploadOpts: FileUploadOptions = {
+    //     headers: headers,
+    //     fileKey: 'file',
+    //     mimeType: "image/*",
+    //     chunkedMode: false,
+    //     fileName: imageData.substr(imageData.lastIndexOf('/') + 1)
+    //   };
+    //   uploadOpts.params = { typeUser: 'driver', typeImage: 'verification' };
+    //   const res = JSON.parse((await fileTransfer.upload(imageData, this.authService.API_URL + '/users/uploadImage', uploadOpts)).response)
+    //   if (res.status) {
+    //     this.formData.transportation_license_photo = res?.file?.filename
+    //     this.license_files.push(res.file)
+    //     this.loading.dismiss();
+    //   }
+    // })
   }
-
-  async addFilesCarPhoto() {
-    this.loading = await this.loadingCtrl.create({
-      message: 'Отгружаем фото',
-      cssClass: 'custom-loading'
-    });
-    await this.authService.camera.getPicture(this.authService.optionsCamera).then(async (imageData: any) => {
-      this.loading.present()
-      const fileTransfer: FileTransferObject = await this.authService.transfer.create();
-      const headers = { 'Authorization': 'Bearer ' + AuthenticationService.jwt };
-      const uploadOpts: FileUploadOptions = {
-        headers: headers,
-        fileKey: 'file',
-        mimeType: "image/*",
-        chunkedMode: false,
-        fileName: imageData.substr(imageData.lastIndexOf('/') + 1)
-      };
-      uploadOpts.params = { typeUser: 'driver', typeImage: 'verification' };
-      const res = JSON.parse((await fileTransfer.upload(imageData, this.authService.API_URL + '/users/uploadImage', uploadOpts)).response)
-      if (this.stepper == 0) {
-        this.tech_passport_files.push(res?.file?.filename)
-        this.formData.techpassport_photo1 = res?.file?.filename;
-        this.stepper++;
-      } else {
-        this.formData.techpassport_photo2 = res?.file?.filename;
-      }
-      if (res.status) {
-        this.loading.dismiss();
-      }
-    })
-  }
-
-
   async addPassport() {
     this.loading = await this.loadingCtrl.create({
       message: 'Фото паспорта с вашим лицом селфи',
       cssClass: 'custom-loading'
     });
-    await this.authService.camera.getPicture(this.authService.optionsCamera).then(async (imageData: any) => {
-      this.loading.present()
-      const fileTransfer: FileTransferObject = await this.authService.transfer.create();
-      const headers = { 'Authorization': 'Bearer ' + AuthenticationService.jwt };
-      const uploadOpts: FileUploadOptions = {
-        headers: headers,
-        fileKey: 'file',
-        mimeType: "image/*",
-        chunkedMode: false,
-        fileName: imageData.substr(imageData.lastIndexOf('/') + 1)
-      };
-      uploadOpts.params = { typeUser: 'driver', typeImage: 'verification' };
-      const res = JSON.parse((await fileTransfer.upload(imageData, this.authService.API_URL + '/users/uploadImage', uploadOpts)).response)
-      this.formData.selfies_with_passport = res?.file?.filename
-      if (res.status) {
-        this.loading.dismiss();
-      }
-    })
+    // await this.authService.camera.getPicture(this.authService.optionsCamera).then(async (imageData: any) => {
+    //   this.loading.present()
+    //   const fileTransfer: FileTransferObject = await this.authService.transfer.create();
+    //   const headers = { 'Authorization': 'Bearer ' + AuthenticationService.jwt };
+    //   const uploadOpts: FileUploadOptions = {
+    //     headers: headers,
+    //     fileKey: 'file',
+    //     mimeType: "image/*",
+    //     chunkedMode: false,
+    //     fileName: imageData.substr(imageData.lastIndexOf('/') + 1)
+    //   };
+    //   uploadOpts.params = { typeUser: 'driver', typeImage: 'verification' };
+    //   const res = JSON.parse((await fileTransfer.upload(imageData, this.authService.API_URL + '/users/uploadImage', uploadOpts)).response)
+    //   this.formData.selfies_with_passport = res?.file?.filename
+    //   if (res.status) {
+    //     this.loading.dismiss();
+    //   }
+    // })
   }
   async addPhotoOpposite() {
     this.loading = await this.loadingCtrl.create({
       message: 'Фото паспорта с вашим лицом селфи',
       cssClass: 'custom-loading'
     });
-    await this.authService.camera.getPicture(this.authService.optionsCamera).then(async (imageData: any) => {
-      this.loading.present()
-      const fileTransfer: FileTransferObject = await this.authService.transfer.create();
-      const headers = { 'Authorization': 'Bearer ' + AuthenticationService.jwt };
-      const uploadOpts: FileUploadOptions = {
-        headers: headers,
-        fileKey: 'file',
-        mimeType: "image/*",
-        chunkedMode: false,
-        fileName: imageData.substr(imageData.lastIndexOf('/') + 1)
-      };
-      uploadOpts.params = { typeUser: 'driver', typeImage: 'verification' };
-      const res = JSON.parse((await fileTransfer.upload(imageData, this.authService.API_URL + '/users/uploadImage', uploadOpts)).response)
-      this.formData.transport_front_photo = res?.file?.filename
-      if (res.status) {
-        this.loading.dismiss();
-      }
-    })
-  }
-
-  async deleteFile(file: string, field: string) {
-    const alert = await this.alertController.create({
-      header: 'Удаление фото',
-      message: 'Вы уверены что хотите удалить фото паспорта?',
-      cssClass: 'customAlert',
-      buttons: [
-        {
-          text: 'Отмена',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-
-          }
-        }, {
-          text: 'Удалить',
-          role: 'destructive',
-          handler: async (data) => {
-            const res = await this.authService.delPhotoUser(file).toPromise()
-            if (res.status) {
-              this.formData[field] = ''
-            } else {
-              this.authService.alert('Ошибка', res.error)
-            }
-          }
-        }
-      ],
-    });
-    await alert.present();
+    // await this.authService.camera.getPicture(this.authService.optionsCamera).then(async (imageData: any) => {
+    //   this.loading.present()
+    //   const fileTransfer: FileTransferObject = await this.authService.transfer.create();
+    //   const headers = { 'Authorization': 'Bearer ' + AuthenticationService.jwt };
+    //   const uploadOpts: FileUploadOptions = {
+    //     headers: headers,
+    //     fileKey: 'file',
+    //     mimeType: "image/*",
+    //     chunkedMode: false,
+    //     fileName: imageData.substr(imageData.lastIndexOf('/') + 1)
+    //   };
+    //   uploadOpts.params = { typeUser: 'driver', typeImage: 'verification' };
+    //   const res = JSON.parse((await fileTransfer.upload(imageData, this.authService.API_URL + '/users/uploadImage', uploadOpts)).response)
+    //   this.formData.transport_front_photo = res?.file?.filename
+    //   if (res.status) {
+    //     this.loading.dismiss();
+    //   }
+    // })
   }
   async addPhotoBack() {
     this.loading = await this.loadingCtrl.create({
       message: 'Фото паспорта с вашим лицом селфи',
       cssClass: 'custom-loading'
     });
-    await this.authService.camera.getPicture(this.authService.optionsCamera).then(async (imageData: any) => {
-      this.loading.present()
-      const fileTransfer: FileTransferObject = await this.authService.transfer.create();
-      const headers = { 'Authorization': 'Bearer ' + AuthenticationService.jwt };
-      const uploadOpts: FileUploadOptions = {
-        headers: headers,
-        fileKey: 'file',
-        mimeType: "image/*",
-        chunkedMode: false,
-        fileName: imageData.substr(imageData.lastIndexOf('/') + 1)
-      };
-      uploadOpts.params = { typeUser: 'driver', typeImage: 'verification' };
-      const res = JSON.parse((await fileTransfer.upload(imageData, this.authService.API_URL + '/users/uploadImage', uploadOpts)).response)
-      this.formData.transport_back_photo = res?.file?.filename
-      if (res.status) {
-        this.loading.dismiss();
-      }
-    })
+    // await this.authService.camera.getPicture(this.authService.optionsCamera).then(async (imageData: any) => {
+    //   this.loading.present()
+    //   const fileTransfer: FileTransferObject = await this.authService.transfer.create();
+    //   const headers = { 'Authorization': 'Bearer ' + AuthenticationService.jwt };
+    //   const uploadOpts: FileUploadOptions = {
+    //     headers: headers,
+    //     fileKey: 'file',
+    //     mimeType: "image/*",
+    //     chunkedMode: false,
+    //     fileName: imageData.substr(imageData.lastIndexOf('/') + 1)
+    //   };
+    //   uploadOpts.params = { typeUser: 'driver', typeImage: 'verification' };
+    //   const res = JSON.parse((await fileTransfer.upload(imageData, this.authService.API_URL + '/users/uploadImage', uploadOpts)).response)
+    //   this.formData.transport_back_photo = res?.file?.filename
+    //   if (res.status) {
+    //     this.loading.dismiss();
+    //   }
+    // })
   }
   async addPhotoLeft() {
     this.loading = await this.loadingCtrl.create({
       message: 'Фото паспорта с вашим лицом селфи',
       cssClass: 'custom-loading'
     });
-    await this.authService.camera.getPicture(this.authService.optionsCamera).then(async (imageData: any) => {
-      this.loading.present()
-      const fileTransfer: FileTransferObject = await this.authService.transfer.create();
-      const headers = { 'Authorization': 'Bearer ' + AuthenticationService.jwt };
-      const uploadOpts: FileUploadOptions = {
-        headers: headers,
-        fileKey: 'file',
-        mimeType: "image/*",
-        chunkedMode: false,
-        fileName: imageData.substr(imageData.lastIndexOf('/') + 1)
-      };
-      uploadOpts.params = { typeUser: 'driver', typeImage: 'verification' };
-      const res = JSON.parse((await fileTransfer.upload(imageData, this.authService.API_URL + '/users/uploadImage', uploadOpts)).response)
-      this.formData.transport_side_photo = res?.file?.filename
-      if (res.status) {
-        this.loading.dismiss();
-      }
-    })
+    // await this.authService.camera.getPicture(this.authService.optionsCamera).then(async (imageData: any) => {
+    //   this.loading.present()
+    //   const fileTransfer: FileTransferObject = await this.authService.transfer.create();
+    //   const headers = { 'Authorization': 'Bearer ' + AuthenticationService.jwt };
+    //   const uploadOpts: FileUploadOptions = {
+    //     headers: headers,
+    //     fileKey: 'file',
+    //     mimeType: "image/*",
+    //     chunkedMode: false,
+    //     fileName: imageData.substr(imageData.lastIndexOf('/') + 1)
+    //   };
+    //   uploadOpts.params = { typeUser: 'driver', typeImage: 'verification' };
+    //   const res = JSON.parse((await fileTransfer.upload(imageData, this.authService.API_URL + '/users/uploadImage', uploadOpts)).response)
+    //   this.formData.transport_side_photo = res?.file?.filename
+    //   if (res.status) {
+    //     this.loading.dismiss();
+    //   }
+    // })
   }
   async addPhotoAdr() {
     this.loading = await this.loadingCtrl.create({
       message: 'Фото паспорта с вашим лицом селфи',
       cssClass: 'custom-loading'
     });
-    await this.authService.camera.getPicture(this.authService.optionsCamera).then(async (imageData: any) => {
-      this.loading.present()
-      const fileTransfer: FileTransferObject = await this.authService.transfer.create();
-      const headers = { 'Authorization': 'Bearer ' + AuthenticationService.jwt };
-      const uploadOpts: FileUploadOptions = {
-        headers: headers,
-        fileKey: 'file',
-        mimeType: "image/*",
-        chunkedMode: false,
-        fileName: imageData.substr(imageData.lastIndexOf('/') + 1)
-      };
-      uploadOpts.params = { typeUser: 'driver', typeImage: 'verification' };
-      const res = JSON.parse((await fileTransfer.upload(imageData, this.authService.API_URL + '/users/uploadImage', uploadOpts)).response)
-      this.formData.adr_photo = res?.file?.filename
-      if (res.status) {
-        this.loading.dismiss();
-      }
-    })
+    // await this.authService.camera.getPicture(this.authService.optionsCamera).then(async (imageData: any) => {
+    //   this.loading.present()
+    //   const fileTransfer: FileTransferObject = await this.authService.transfer.create();
+    //   const headers = { 'Authorization': 'Bearer ' + AuthenticationService.jwt };
+    //   const uploadOpts: FileUploadOptions = {
+    //     headers: headers,
+    //     fileKey: 'file',
+    //     mimeType: "image/*",
+    //     chunkedMode: false,
+    //     fileName: imageData.substr(imageData.lastIndexOf('/') + 1)
+    //   };
+    //   uploadOpts.params = { typeUser: 'driver', typeImage: 'verification' };
+    //   const res = JSON.parse((await fileTransfer.upload(imageData, this.authService.API_URL + '/users/uploadImage', uploadOpts)).response)
+    //   this.formData.adr_photo = res?.file?.filename
+    //   if (res.status) {
+    //     this.loading.dismiss();
+    //   }
+    // })
   }
   async addPhotoLicence() {
     this.loading = await this.loadingCtrl.create({
       message: 'Фото паспорта с вашим лицом селфи',
       cssClass: 'custom-loading'
     });
-    await this.authService.camera.getPicture(this.authService.optionsCamera).then(async (imageData: any) => {
-      this.loading.present()
-      const fileTransfer: FileTransferObject = await this.authService.transfer.create();
-      const headers = { 'Authorization': 'Bearer ' + AuthenticationService.jwt };
-      const uploadOpts: FileUploadOptions = {
-        headers: headers,
-        fileKey: 'file',
-        mimeType: "image/*",
-        chunkedMode: false,
-        fileName: imageData.substr(imageData.lastIndexOf('/') + 1)
-      };
-      uploadOpts.params = { typeUser: 'driver', typeImage: 'verification' };
-      const res = JSON.parse((await fileTransfer.upload(imageData, this.authService.API_URL + '/users/uploadImage', uploadOpts)).response)
-      this.formData.driver_license = res?.file?.filename
-      if (res.status) {
-        this.loading.dismiss();
-      }
-    })
+    // await this.authService.camera.getPicture(this.authService.optionsCamera).then(async (imageData: any) => {
+    //   this.loading.present()
+    //   const fileTransfer: FileTransferObject = await this.authService.transfer.create();
+    //   const headers = { 'Authorization': 'Bearer ' + AuthenticationService.jwt };
+    //   const uploadOpts: FileUploadOptions = {
+    //     headers: headers,
+    //     fileKey: 'file',
+    //     mimeType: "image/*",
+    //     chunkedMode: false,
+    //     fileName: imageData.substr(imageData.lastIndexOf('/') + 1)
+    //   };
+    //   uploadOpts.params = { typeUser: 'driver', typeImage: 'verification' };
+    //   const res = JSON.parse((await fileTransfer.upload(imageData, this.authService.API_URL + '/users/uploadImage', uploadOpts)).response)
+    //   this.formData.driver_license = res?.file?.filename
+    //   if (res.status) {
+    //     this.loading.dismiss();
+    //   }
+    // })
   }
+  async addFilesCarPhoto() {
+    this.loading = await this.loadingCtrl.create({
+      message: 'Отгружаем фото',
+      cssClass: 'custom-loading'
+    });
+    // await this.authService.camera.getPicture(this.authService.optionsCamera).then(async (imageData: any) => {
+    //   this.loading.present()
+    //   const fileTransfer: FileTransferObject = await this.authService.transfer.create();
+    //   const headers = { 'Authorization': 'Bearer ' + AuthenticationService.jwt };
+    //   const uploadOpts: FileUploadOptions = {
+    //     headers: headers,
+    //     fileKey: 'file',
+    //     mimeType: "image/*",
+    //     chunkedMode: false,
+    //     fileName: imageData.substr(imageData.lastIndexOf('/') + 1)
+    //   };
+    //   uploadOpts.params = { typeUser: 'driver', typeImage: 'verification' };
+    //   const res = JSON.parse((await fileTransfer.upload(imageData, this.authService.API_URL + '/users/uploadImage', uploadOpts)).response)
+    //   if (this.stepper == 0) {
+    //     this.tech_passport_files.push(res?.file?.filename)
+    //     this.formData.techpassport_photo1 = res?.file?.filename;
+    //     this.stepper++;
+    //   } else {
+    //     this.formData.techpassport_photo2 = res?.file?.filename;
+    //   }
+    //   if (res.status) {
+    //     this.loading.dismiss();
+    //   }
+    // })
+  }
+  
   async submit() {
     if (!this.formData.full_name) {
       this.authService.alert('Ошибка', 'Требуется  ввести свое имя и фамилию')
@@ -528,7 +526,35 @@ export class VerificationPage implements OnInit {
       await actionSheet.present();
     }
   }
+  async deleteFile(file: string, field: string) {
+    const alert = await this.alertController.create({
+      header: 'Удаление фото',
+      message: 'Вы уверены что хотите удалить фото паспорта?',
+      cssClass: 'customAlert',
+      buttons: [
+        {
+          text: 'Отмена',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
 
+          }
+        }, {
+          text: 'Удалить',
+          role: 'destructive',
+          handler: async (data) => {
+            const res = await this.authService.delPhotoUser(file).toPromise()
+            if (res.status) {
+              this.formData[field] = ''
+            } else {
+              this.authService.alert('Ошибка', res.error)
+            }
+          }
+        }
+      ],
+    });
+    await alert.present();
+  }
   back() {
     this.navCtrl.back()
   }

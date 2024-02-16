@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { User } from '../user';
 import { Storage } from '@ionic/storage';
-import { AlertController, Platform, } from "@ionic/angular";
-import { Camera, CameraOptions } from '@awesome-cordova-plugins/camera/ngx';
+import { AlertController, LoadingController, Platform, } from "@ionic/angular";
 import { FileTransfer, } from "@ionic-native/file-transfer/ngx";
 import { InAppBrowser } from "@ionic-native/in-app-browser/ngx";
 import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { Router } from '@angular/router';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 const TOKEN_KEY = 'jwttirgotoken';
 const API_URL = 'https://admin.tirgo.io/api';
@@ -44,12 +44,12 @@ export class AuthenticationService {
   public allordersfree: any[] = [];
   public allmyordersprocessing: any[] = [];
   public cityinfo: string = '';
-  public optionsCamera: CameraOptions = {
-    quality: 50,
-    destinationType: this.camera.DestinationType.FILE_URI,
-    encodingType: this.camera.EncodingType.JPEG,
-    mediaType: this.camera.MediaType.PICTURE,
-    sourceType: this.camera.PictureSourceType.PHOTOLIBRARY
+  loading;
+  public optionsCamera = {
+    quality: 100,
+    allowEditing: false,
+    resultType: CameraResultType.Base64,
+    source: CameraSource.Camera
   };
 
   constructor(
@@ -57,21 +57,60 @@ export class AuthenticationService {
     public alertController: AlertController,
     private iab: InAppBrowser,
     private storage: Storage,
-    public camera: Camera,
     public transfer: FileTransfer,
     private geolocation: Geolocation,
     public diagnostic: Diagnostic,
     public platform: Platform,
-    public router: Router
+    public router: Router,
+    private loadingCtrl: LoadingController
   ) {
   }
+
+  async uploadFile(fileName: string, base64Data: string, type: string): Promise<any> {
+    this.loading = await this.loadingCtrl.create({
+      message: 'Отгружаем фото',
+      cssClass: 'custom-loading'
+    });
+    await this.loading.present();
+
+    try {
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob: any = new Blob([byteArray], { type: 'image/jpeg' });
+      const formData = new FormData();
+      formData.append('file', blob, fileName);
+      formData.append('typeImage', type);
+
+      const headers = new HttpHeaders({
+        'Access-Control-Allow-Origin': '*',
+        'Authorization': 'Bearer ' + AuthenticationService.jwt,
+      });
+      const url = `${this.API_URL}/users/uploadImage`;
+      const response: any = await this.http.post(url, formData).toPromise();
+      console.log(response);
+
+      if (response.status) {
+        this.loading.dismiss();
+        return response;
+      }
+    }
+    catch (error: any) {
+      this.alert('Ошибка:', error.message);
+      this.loading.dismiss();
+    }
+  }
+
   goToSupport() {
     this.iab.create('https://t.me/tirgosupportbot', '_system');
   }
   goToSupportAdmin() {
-    if(!this.currentUser.to_subscription) {
+    if (!this.currentUser.to_subscription) {
       this.alertSubscription('Необходимо подключить подписку для этой услуги', '')
-    }else {
+    } else {
       this.iab.create('https://t.me/TIRGO_STOL_USLUG', '_system');
     }
   }
@@ -313,7 +352,7 @@ export class AuthenticationService {
     });
     return this.http.post<any>(sUrl, body);
   }
-  
+
   getContacts() {
     const sUrl = API_URL + '/users/getContacts';
     return this.http.get<any>(sUrl)
@@ -487,18 +526,18 @@ export class AuthenticationService {
       cssClass: 'customAlert',
       buttons: [
         {
-        text: 'Настройки',
-        handler: async () => {
-          cordova.plugins.diagnostic.switchToLocationSettings();
+          text: 'Настройки',
+          handler: async () => {
+            cordova.plugins.diagnostic.switchToLocationSettings();
+          }
+        },
+        {
+          text: 'Закрыть',
+          handler: async () => {
+            this.alertController.dismiss();
+          }
         }
-      },
-      {
-        text: 'Закрыть',
-        handler: async () => {
-          this.alertController.dismiss();
-        }
-      }
-    ]
+      ]
     });
     await alert.present();
   }
@@ -582,40 +621,40 @@ export class AuthenticationService {
     return this.http.post<any>(sUrl, body);
   }
 
-  async locationIsAvailable(){
-    this.diagnostic.getLocationAuthorizationStatus().then((status:any)=>{
-      if((this.platform.is("android") && status !== "GRANTED") || (this.platform.is("ios") && status !== "authorized")){
+  async locationIsAvailable() {
+    this.diagnostic.getLocationAuthorizationStatus().then((status: any) => {
+      if ((this.platform.is("android") && status !== "GRANTED") || (this.platform.is("ios") && status !== "authorized")) {
         // this.setLocation(status)
       }
 
-    }) 
+    })
   }
 
-  setLocation(val:string){
+  setLocation(val: string) {
     this.alertController.create({
-      header:"Использование вашей геопозиции",
-      mode:'md',
-      message:"<p> собирает данные о вашем местоположении,чтобы обеспечить работу курьерской доставки , даже если приложение закрыто или когда приложение не используется.</p",
-      backdropDismiss:false,
-      buttons:[{
-        text:'Разрешаю',handler:()=>{
-            this.diagnostic.getLocationAuthorizationStatus().then(async(value:any) =>{
-              console.log(value + 'this.diagnostic.getLocationAuthorizationStatus()')
-                this.diagnostic.requestLocationAuthorization(cordova.plugins.diagnostic.locationAuthorizationMode.ALWAYS).then(async(resp:string)=>{
-                  if((this.platform.is("android") && resp !== "GRANTED") || (this.platform.is("ios") && resp !== "authorized")){
-                    const alert = this.alertController.create({
-                      header:"Необходимо изменить уровень доступа к геопозиции",
-                      message:"Закройте приложение, зайдите в настройки приложения Tirgo и выберите доступ к геопозиции - 'Разрешить в любом режиме'",
-                    });
-                    (await alert).present()
-                  } else {
-                    console.log('i have permission')
-                    // this.sys.lsSet('initBackgroundLocation', true)
-                    // this.backgroundPositionService.initBackgroundPosition();
-                  }
-                })
-              
+      header: "Использование вашей геопозиции",
+      mode: 'md',
+      message: "<p> собирает данные о вашем местоположении,чтобы обеспечить работу курьерской доставки , даже если приложение закрыто или когда приложение не используется.</p",
+      backdropDismiss: false,
+      buttons: [{
+        text: 'Разрешаю', handler: () => {
+          this.diagnostic.getLocationAuthorizationStatus().then(async (value: any) => {
+            console.log(value + 'this.diagnostic.getLocationAuthorizationStatus()')
+            this.diagnostic.requestLocationAuthorization(cordova.plugins.diagnostic.locationAuthorizationMode.ALWAYS).then(async (resp: string) => {
+              if ((this.platform.is("android") && resp !== "GRANTED") || (this.platform.is("ios") && resp !== "authorized")) {
+                const alert = this.alertController.create({
+                  header: "Необходимо изменить уровень доступа к геопозиции",
+                  message: "Закройте приложение, зайдите в настройки приложения Tirgo и выберите доступ к геопозиции - 'Разрешить в любом режиме'",
+                });
+                (await alert).present()
+              } else {
+                console.log('i have permission')
+                // this.sys.lsSet('initBackgroundLocation', true)
+                // this.backgroundPositionService.initBackgroundPosition();
+              }
             })
+
+          })
         }
       },
       ]
@@ -627,6 +666,6 @@ export class AuthenticationService {
     return this.http.get<any>(sUrl);
   }
   addSubscription(data) {
-    return this.http.post(API_URL + '/users/addDriverSubscription',data)
+    return this.http.post(API_URL + '/users/addDriverSubscription', data)
   }
 }

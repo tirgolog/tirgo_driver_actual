@@ -1,28 +1,35 @@
-import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {Observable} from 'rxjs';
-import {AuthenticationService} from './authentication.service';
-import {map} from "rxjs/operators";
+import { Observable } from 'rxjs';
+import { AuthenticationService } from './authentication.service';
+import { map } from "rxjs/operators";
 
 @Injectable()
-export class ApiInterceptor implements HttpInterceptor  {
+export class ApiInterceptor implements HttpInterceptor {
+
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // console.log(req)\
-    req = req.clone({
-      // withCredentials: true,
-      setHeaders: {
-          'Accept'       : 'application/json',
+    if (req.url == 'https://admin.tirgo.io/api/users/uploadImage') {
+      req = req.clone({
+        setHeaders: {
+          'Authorization': `Bearer ${AuthenticationService.jwt}`,
+        },
+      });
+    }
+    else {
+      req = req.clone({
+        setHeaders: {
+          'Accept': 'application/json',
           'Content-Type' : 'application/json; charset=utf-8',
           'Authorization': `Bearer ${AuthenticationService.jwt}`,
-      },
-    });
-      return next.handle(req).pipe(
-          map((event: HttpEvent<any>) => {
-              if (event instanceof HttpResponse) {
-                  // console.log(`\n${req.method}: ${req.url}`, req.body, '\nRESPONSE:', event.body);
-                  // this.errorDialogService.openDialog(event);
-              }
-              return event;
-          }));
+        },
+      });
+    }
+   
+    return next.handle(req).pipe(
+      map((event: HttpEvent<any>) => {
+        if (event instanceof HttpResponse) {
+        }
+        return event;
+      }));
   }
 }

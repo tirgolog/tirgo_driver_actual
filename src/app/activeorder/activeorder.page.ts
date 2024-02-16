@@ -103,7 +103,7 @@ export class ActiveorderPage implements OnInit {
   }
   callMan(phone: string) {
     console.log(phone)
-    this.callNumber.callNumber('+' + phone, true)
+    this.callNumber.callNumber(phone, true)
   }
   returnNameTypeTransport(type: number) {
     const index = this.authService.typetruck.findIndex(e => +e.id === +type)

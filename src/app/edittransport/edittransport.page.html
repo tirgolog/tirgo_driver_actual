@@ -51,7 +51,7 @@
             </div>
           </div>
           <div class="file-group">
-            <div class="form-group" (click)="addFilesTechPassport()">
+            <div class="form-group" (click)="uploadImage('tech_passport_files')">
               <label class="label">
                 <span class="title"><span>+</span> <br>{{'Добавить' | translate}} <br> {{'документ' | translate}}</span>
               </label>
@@ -62,7 +62,7 @@
 
         <p><b>{{'Лицензии на перевозку грузов' | translate}}</b></p>
         <div class="file-uploads">
-          <div class="file-group" *ngFor="let row of license_files;let i=index" (click)="delFileLicense(i)">
+          <div class="file-group" *ngFor="let row of license_files;let i=index" (click)="delFileLicense(row.preview)">
             <div class="del-button">
               <ion-icon name="trash-bin-outline"></ion-icon>
             </div>
@@ -70,8 +70,8 @@
               <img [src]="file_url+row.filename" alt="">
             </div>
           </div>
-          <div class="file-group">
-            <div class="form-group" (click)="addFilesLicense()">
+          <div class="file-group"  *ngIf="license_files.length < 3">
+            <div class="form-group" (click)="uploadImage('license_files')">
               <label class="label">
                 <span class="title"><span>+</span> <br>{{'Добавить' | translate}} <br> {{'лицензию' | translate}}</span>
               </label>
@@ -81,16 +81,16 @@
 
         <p><b>{{'Фото транспорта' | translate}}</b></p>
         <div class="file-uploads">
-          <div class="file-group" *ngFor="let row of car_photos;let i=index" (click)="delFileCarPhoto(i)">
+          <div class="file-group" *ngFor="let row of car_photos;let i=index" (click)="delFileCarPhoto(row.preview)">
             <div class="del-button">
               <ion-icon name="trash-bin-outline"></ion-icon>
             </div>
             <div class="form-group">
-              <img [src]="file_url+row.filename" alt="">
+              <img  [src]="file_url+row.filename" alt="">
             </div>
           </div>
-          <div class="file-group">
-            <div class="form-group" (click)="addFilesCarPhoto()">
+          <div class="file-group" *ngIf="car_photos.length < 4">
+            <div class="form-group" (click)="uploadImage('car_photos')">
               <label class="label">
                 <span class="title"><span>+</span> <br>{{'Добавить' | translate}} <br> {{'фото' | translate}}</span>
               </label>

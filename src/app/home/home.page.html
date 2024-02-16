@@ -47,6 +47,9 @@
                 <img *ngIf="findAcceptedOrders(row.id)" src="assets/img/rel.svg" alt="">
                 №{{authService.addLeadingZeros(row.id)}}
               </span>
+              <span *ngIf="row.merchant && row.merchant.logoFilePath">
+                <img [src]="file_url+row.merchant.logoFilePath" alt="">
+              </span>
               <span>
                 <img src="assets/img/done.svg" *ngIf="row.secure_transaction" />
                 <span class="view-order" *ngIf="vieworder !== row.id">{{'Просмотреть' | translate}}</span>
@@ -71,8 +74,8 @@
           <ng-container *ngIf="vieworder === row.id">
             <table class="table-data">
               <tbody>
-                <tr *ngIf="row.isMerchant && row.logo">
-                  <td>Компания:</td>
+                <tr *ngIf="row.isMerchant">
+                  <td>Клиент:</td>
                   <td>{{row.merchant.companyName}}</td>
                 </tr>
                 <tr>

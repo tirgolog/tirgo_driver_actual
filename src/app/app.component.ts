@@ -72,7 +72,6 @@ export class AppComponent {
     await this.authService.checkSession().toPromise().then(async (res) => {
       if (res.status) {
         this.authService.currentUser = new User(res.user);
-        console.log(this.authService.currentUser);
         if (!this.authService.isAuthenticated()) {
           this.authService.authenticationState.next(true);
         }
@@ -163,18 +162,13 @@ export class AppComponent {
       await this.router.navigate(['selectlanguage'], { replaceUrl: true });
     })
   }
-  initializeApp() {
-    // this.initGeolocation();
+  async initializeApp() {
     this.initPushNotifications();
-    // this.checkSession();
-
     this.platform.ready().then(() => {
       this.network.onDisconnect().subscribe(() => {
-        console.log('onDisconnect')
         this.router.navigate(['noconnect'], { replaceUrl: true });
       });
       this.network.onConnect().subscribe(() => {
-        console.log('onConnect')
         if (this.authService.isAuthenticated()) {
           this.router.navigate(['tabs', 'home'], { replaceUrl: true });
         } else {

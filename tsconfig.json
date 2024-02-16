@@ -25,6 +25,7 @@
       "es2018",
       "dom"
     ],
+    "types": ["@capacitor/core"],
     "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
