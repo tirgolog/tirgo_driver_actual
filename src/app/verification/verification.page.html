@@ -185,40 +185,45 @@
           </div>
         </div>
       </div>
-      <p class="mt-10" *ngIf="tech_passport_files.length<=2"><b>{{'Фото тех паспорта' | translate}}</b></p>
-      <div class="file-uploads" *ngIf="tech_passport_files.length<=2">
-        <div class="file-group" *ngIf="formData.techpassport_photo1!=''" (click)="deleteFile(formData.techpassport_photo1, 'techpassport_photo1')">
+
+      <p class="mt-10"><b>{{'Фото тех паспорта (Спереди)' | translate}}:</b></p>
+      <div class="file-uploads">
+        <div class="file-group" *ngIf="formData.techpassport_photo1 == ''">
+          <div class="form-group" (click)="uploadFile('techpassport_photo1')" >
+            <label class="label">
+              <span class="title"><span>+</span> </span>
+            </label>
+          </div>
+        </div>
+        <div class="file-group" (click)="deleteFile(formData.techpassport_photo1, 'techpassport_photo1')">
           <div class="del-button" *ngIf="formData.techpassport_photo1!=''">
             <ion-icon name="trash-bin-outline"></ion-icon>
           </div>
-          <div class="form-group" *ngIf="formData.techpassport_photo1!=''">
-            <img [src]="file_url+formData.techpassport_photo1" alt="">
+          <div class="form-group" *ngIf="formData.techpassport_photo1">
+            <img [src]="file_url+ formData.techpassport_photo1" />
           </div>
         </div>
-        <div class="file-group" *ngIf="formData.techpassport_photo2!=''" (click)="deleteFile(formData.techpassport_photo2, 'transport_front_photo')">
+      </div>
+
+      <p class="mt-10"><b>{{'Фото тех паспорта (Сзади)' | translate}}:</b></p>
+      <div class="file-uploads">
+        <div class="file-group" *ngIf="formData.techpassport_photo2 == ''">
+          <div class="form-group" (click)="uploadFile('techpassport_photo2')" >
+            <label class="label">
+              <span class="title"><span>+</span> </span>
+            </label>
+          </div>
+        </div>
+        <div class="file-group" (click)="deleteFile(formData.techpassport_photo2, 'techpassport_photo2')">
           <div class="del-button" *ngIf="formData.techpassport_photo2!=''">
             <ion-icon name="trash-bin-outline"></ion-icon>
           </div>
-          <div class="form-group" *ngIf="formData.techpassport_photo2!=''">
-            <img [src]="file_url+formData.techpassport_photo2" alt="">
+          <div class="form-group" *ngIf="formData.techpassport_photo2">
+            <img [src]="file_url+ formData.techpassport_photo2" />
           </div>
-        </div>
-        <div class="file-group">
-          
-          <div *ngIf="!formData.techpassport_photo1" class="form-group" (click)="uploadFile('techpassport_photo1')">
-            <label class="label">
-              <span class="title"><span>+</span> </span>
-            </label>
-          </div>
-
-          <div *ngIf="formData.techpassport_photo1 && !formData.techpassport_photo2" class="form-group" (click)="uploadFile('techpassport_photo2')">
-            <label class="label">
-              <span class="title"><span>+</span> </span>
-            </label>
-          </div>
-
         </div>
       </div>
+
       <p class="mt-10" *ngIf="!state_registration_truckNumber_check"><b>{{'Гос. номер Тягача' | translate}}</b></p>
       <input type="text" name="name" placeholder="Гос. номер Тягача" *ngIf="!state_registration_truckNumber_check"
         [(ngModel)]="formData.state_registration_truckNumber">
