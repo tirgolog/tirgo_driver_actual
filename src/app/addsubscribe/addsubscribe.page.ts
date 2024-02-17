@@ -56,7 +56,7 @@ export class AddSubscribePage implements OnInit {
       };
     }, error => {
       
-      if (error.error.error == 'пользователь не произвел оплату') {
+      if (error.error.error == 'Недостаточно средств на балансе') {
         this.loading = false;
         this.authService.alert('Недостаточно средств на балансе', 'Пополните пожалуйста баланс ');
         this.router.navigate(['/balance']);
