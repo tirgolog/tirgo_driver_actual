@@ -386,6 +386,8 @@ export class HomePage implements OnInit {
               item.id = item.id.split("M")[1];
             const res = await this.authService.cancelOrder(item).toPromise();
             if (res.status) {
+              this.authService.checkSession();
+              this.authService.activeorder = null;
               this.getOrders();
             }
           },

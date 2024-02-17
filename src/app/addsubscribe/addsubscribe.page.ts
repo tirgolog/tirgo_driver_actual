@@ -43,7 +43,7 @@ export class AddSubscribePage implements OnInit {
     }
     this.authService.addSubscription(data).subscribe((res: any) => {
       if (res.status) {
-        this.authService.checkSession().subscribe((res:any) => {
+        this.authService.checkSession().subscribe((res: any) => {
           this.authService.currentUser.balance = res.user.balance;
         });
         this.loading = false;
@@ -55,6 +55,7 @@ export class AddSubscribePage implements OnInit {
         this.authService.alert('Ошибка', '');
       };
     }, error => {
+      
       if (error.error.error == 'Недостаточно средств на балансе') {
         this.loading = false;
         this.authService.alert('Недостаточно средств на балансе', 'Пополните пожалуйста баланс ');
