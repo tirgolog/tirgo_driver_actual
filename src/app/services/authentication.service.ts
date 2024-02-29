@@ -668,12 +668,12 @@ export class AuthenticationService {
   }
 
   getServicesList() {
-    const sUrl = API_URL + '/admin/services';
+    const sUrl = API_URL + '/users/services';
     return this.http.get<any>(sUrl);
   }
 
   getAlhpaBalance(userId) {
-    const sUrl = API_URL + '/admin/alpha-payment/'+userId;
+    const sUrl = API_URL + '/users/alpha-payment/'+userId;
     return this.http.get<any>(sUrl);
   }
 }
