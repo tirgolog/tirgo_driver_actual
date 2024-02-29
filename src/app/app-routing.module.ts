@@ -61,6 +61,10 @@ const routes: Routes = [
     loadChildren: () => import('./support/support.module').then(m => m.SupportPageModule)
   },
   {
+    path: 'services-list',
+    loadChildren: () => import('./services-list/services-list.module').then(m => m.ServicesListModule)
+  },
+  {
     path: 'name',
     loadChildren: () => import('./auth/name/name.module').then(m => m.NamePageModule)
   },

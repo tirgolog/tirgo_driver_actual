@@ -555,8 +555,6 @@ export class AuthenticationService {
     });
   }
 
-
-
   logout() {
     this.authenticationState.next(false);
   }
@@ -667,5 +665,15 @@ export class AuthenticationService {
   }
   addSubscription(data) {
     return this.http.post(API_URL + '/users/addDriverSubscription', data)
+  }
+
+  getServicesList() {
+    const sUrl = API_URL + '/admin/services';
+    return this.http.get<any>(sUrl);
+  }
+
+  getAlhpaBalance(userId) {
+    const sUrl = API_URL + '/admin/alpha-payment/'+userId;
+    return this.http.get<any>(sUrl);
   }
 }

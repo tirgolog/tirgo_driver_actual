@@ -17,8 +17,9 @@
           </div>
           <button class="my-profile" (click)="goTo('/tabs/profile/',true)">{{'Мой профиль' | translate}} <img
               src="assets/img/Edit.svg" alt=""></button>
-          <small *ngIf="authService.currentUser?.issubscription" class="status-text" style="display: block;margin: 5px 0;">
-            Подписка до: <b>{{authService.currentUser?.to_subscription  | date : 'dd.MM.YYYY'}}</b>
+          <small *ngIf="authService.currentUser?.issubscription" class="status-text"
+            style="display: block;margin: 5px 0;">
+            Подписка до: <b>{{authService.currentUser?.to_subscription | date : 'dd.MM.YYYY'}}</b>
           </small>
           <small class="status-text"><b>{{returnStatusName()}}</b></small>
         </div>
@@ -26,6 +27,8 @@
       <nav class="main-nav">
         <button (click)="goTo('/tabs/home/',true)"><ion-icon src="assets/img/main.svg"></ion-icon>{{'Главная' |
           translate}}</button>
+          <button (click)="goTo('/services-list/',true)"><ion-icon src="assets/img/support.svg"></ion-icon>{{'Услуги Tirgo Service' |
+            translate}}</button>
         <!--<button (click)="goTo('/mysubscribers/',false)"><ion-icon src="assets/img/Document.svg"></ion-icon>Мои подписки</button>-->
         <button (click)="goTo('/tabs/archive/',true)"><ion-icon src="assets/img/Calendar2.svg"></ion-icon>{{'Архив
           заказов' | translate}}</button>
