@@ -44,15 +44,15 @@ export class ServicesListPage implements OnInit {
     this.selectedPrice = selectedPriceCard
   }
   submit() {
-    this.loading = true;
-    if(this.alpha_balance < this.selectedPrice.price_uzs) {
-      this.loading = false;
-      this.authService.alert('Недостаточно средств на балансе', 'Пополните пожалуйста баланс ');
-      this.router.navigate(['/balance']);
-    }else {
+    // this.loading = true;
+    // if(this.alpha_balance < this.selectedPrice.price_uzs) {
+    //   this.loading = false;
+    //   this.authService.alert('Недостаточно средств на балансе', 'Пополните пожалуйста баланс ');
+    //   this.router.navigate(['/balance']);
+    // }else {
       this.loading = false;
       let base64 = btoa("m=65dc59df3c319dec9d8c3953;ac.UserID=" + this.authService.currentUser.id + ";a=" + this.selectedPrice.price_uzs + "00");
       this.iab.create('https://checkout.paycom.uz/' + base64, '_system');
-    }
+    // }
   }
 }
