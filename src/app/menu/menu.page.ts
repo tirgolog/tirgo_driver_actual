@@ -5,11 +5,8 @@ import { Storage } from "@ionic/storage";
 import { AuthenticationService } from "../services/authentication.service";
 import { Geolocation } from "@awesome-cordova-plugins/geolocation/ngx";
 import axios from "axios";
-import { ChoiceCityPage } from "../choice-city/choice-city.page";
 import { SelectstatusPage } from "../selectstatus/selectstatus.page";
-import { User } from '../user';
 import { InAppBrowser } from "@ionic-native/in-app-browser/ngx";
-import { log } from 'console';
 
 @Component({
   selector: 'app-menu',
