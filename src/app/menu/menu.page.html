@@ -12,7 +12,7 @@
               <span>{{authService.currentUser?.raiting}}</span>
             </div>
             <div class="user-id">ID: {{authService.currentUser?.id}}</div>
-            <div class="user-id" *ngIf="authService?.currentUser?.driver_verification"><img
+            <div class="user-id" *ngIf="authService?.currentUser?.issubscription"><img
                 src="assets/img/verification.png" alt=""></div>
           </div>
           <button class="my-profile" (click)="goTo('/tabs/profile/',true)">{{'Мой профиль' | translate}} <img
@@ -27,7 +27,7 @@
       <nav class="main-nav">
         <button (click)="goTo('/tabs/home/',true)"><ion-icon src="assets/img/main.svg"></ion-icon>{{'Главная' |
           translate}}</button>
-          <button (click)="goTo('/services-list/',true)"><ion-icon src="assets/img/support.svg"></ion-icon>{{'Услуги Tirgo Service' |
+          <button *ngIf="!authService?.currentUser?.issubscription" (click)="goTo('/services-list/',true)"><ion-icon src="assets/img/document.svg"></ion-icon>{{'Услуги Tirgo Service' |
             translate}}</button>
         <!--<button (click)="goTo('/mysubscribers/',false)"><ion-icon src="assets/img/Document.svg"></ion-icon>Мои подписки</button>-->
         <button (click)="goTo('/tabs/archive/',true)"><ion-icon src="assets/img/Calendar2.svg"></ion-icon>{{'Архив

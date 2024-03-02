@@ -3,6 +3,8 @@ import {NavController} from "@ionic/angular";
 import {AuthenticationService} from "../services/authentication.service";
 import {InAppBrowser} from "@ionic-native/in-app-browser/ngx";
 import { SocketService } from '../services/socket.service';
+import { ActivatedRoute } from '@angular/router';
+import { log } from 'console';
 
 @Component({
   selector: 'app-balance',
@@ -13,15 +15,61 @@ export class BalancePage implements OnInit {
   selectmethodpay: string = 'click'
   amount:string = '';
   payConfirm: boolean = false;
+  priceCards
+  selectedPrice
+  subscriptionId:any
   constructor(
     private iab: InAppBrowser,
     private navCtrl: NavController,
     public authService:AuthenticationService,
-    public socketService: SocketService
+    public socketService: SocketService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
     this.updateDriverBalance();
+    this.getPrice();
+    this.route.queryParamMap.subscribe(params => {
+      if(params) {
+        this.subscriptionId = params.get('subscription_id');
+      }
+    });
+  }
+  
+  getPrice() {
+    this.authService.getSubscribtionsPrice().subscribe((res: any) => {
+      if (res.status) {
+        this.priceCards = res.data;
+        if (this.subscriptionId) {
+          this.priceCards = this.priceCards.filter(card => card.id == +this.subscriptionId);
+        }
+        if (this.priceCards.length > 0) {
+          this.selectedPrice = this.priceCards[0];
+          this.priceCards[0].selected = true;
+        }
+      }
+    });
+  }
+  selectPrice(selectedPriceCard: any) {
+    this.priceCards.forEach(priceCard => priceCard.selected = false);
+    console.log(this.priceCards);
+    
+    selectedPriceCard.selected = true;
+    this.selectedPrice = selectedPriceCard
+  }
+  getPriceText(value: number): string {
+    if (value === 7) {
+      this.amount = '80000'
+      return 'Цена: 80 000 сум';
+    } else if (value === 15) {
+      this.amount = '180000'
+      return 'Цена: 180 000 сум';
+    } else if (value === 47) {
+      this.amount = '570000'
+      return 'Цена: 570 000 сум';
+    } else {
+      return 'Unknown Price';
+    }
   }
   back(){
     this.navCtrl.back()
@@ -50,7 +98,6 @@ export class BalancePage implements OnInit {
       await this.authService.alert('Ошибка','Минимальная сумма оплаты 1000 UZS')
     }
   }
-
   async withdrawFromActivebalance() {
     if(this.authService.currentUser.balance > 0) {
       this.authService.withdrawBalance(this.authService.currentUser.id).subscribe((res: any) => {
@@ -68,7 +115,6 @@ export class BalancePage implements OnInit {
       await this.authService.alert('Ошибка','У вас нет активного баланса')
     }
   }
-
   updateDriverBalance() {
     this.socketService.updateDriverBalance().subscribe((res:any) => {
       if(res) {
