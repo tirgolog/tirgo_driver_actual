@@ -7,6 +7,7 @@ import { Geolocation } from "@awesome-cordova-plugins/geolocation/ngx";
 import axios from "axios";
 import { SelectstatusPage } from "../selectstatus/selectstatus.page";
 import { InAppBrowser } from "@ionic-native/in-app-browser/ngx";
+import { log } from 'console';
 
 @Component({
   selector: 'app-menu',
@@ -28,7 +29,6 @@ export class MenuPage implements OnInit {
   ) { }
 
   ngOnInit() {
-
   }
   async logOut() {
     this.menu.toggle();
@@ -104,7 +104,6 @@ export class MenuPage implements OnInit {
     });
     await modal.present();
   }
-
   async goToSupportAdmin() {
     if (!this.authService.currentUser.to_subscription) {
       this.authService.alertSubscription('Необходимо подключить подписку для этой услуги', '')

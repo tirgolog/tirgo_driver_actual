@@ -676,4 +676,7 @@ export class AuthenticationService {
     const sUrl = API_URL + '/users/alpha-payment/'+userId;
     return this.http.get<any>(sUrl);
   }
+  freeService(data) {
+    return this.http.post(API_URL + '/users/addDriverServices', data)
+  }
 }

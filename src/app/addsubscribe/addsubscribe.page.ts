@@ -3,6 +3,7 @@ import { log } from 'console';
 import { AuthenticationService } from '../services/authentication.service';
 import { Router } from '@angular/router';
 import { SocketService } from '../services/socket.service';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-addsubscribe',
@@ -16,7 +17,9 @@ export class AddSubscribePage implements OnInit {
   constructor(
     private authService: AuthenticationService,
     private router: Router,
-    private socket: SocketService) { }
+    private socket: SocketService,
+    private navCtrl: NavController
+    ) { }
   ngOnInit(): void {
     this.getPrice();
   }
@@ -59,7 +62,7 @@ export class AddSubscribePage implements OnInit {
       if (error.error.error == 'Недостаточно средств на балансе') {
         this.loading = false;
         this.authService.alert('Недостаточно средств на балансе', 'Пополните пожалуйста баланс ');
-        this.router.navigate(['/balance']);
+        this.router.navigate(['/balance'], { queryParams: { subscription_id: this.selectedPrice.id } });
       } else {
         this.loading = false;
         this.authService.alert('Ошибка', '');
@@ -76,5 +79,8 @@ export class AddSubscribePage implements OnInit {
     } else {
       return 'Unknown Price';
     }
+  }
+  back(){
+    this.navCtrl.back()
   }
 }

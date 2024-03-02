@@ -26,14 +26,35 @@
               src="assets/payment/payme.svg" alt=""></button>
         </div>
       </div>
-      <p class="ion-no-padding ion-no-margin"><b>{{'Сумма' | translate}}</b></p>
+      <!-- <p class="ion-no-padding ion-no-margin"><b>{{'Сумма' | translate}}</b></p>
       <div class="payment-total form-block">
         <input type="text" inputmode="tel" name="total" placeholder="80 000" [(ngModel)]="amount">
+      </div> -->
+      <div style="width: 100%;">
+        <p style="text-align: center; width: 100%;">{{'Подписки' | translate}}</p>
+
+      <div class="body-wrap form-block" style="width: 100%;">
+
+        <div *ngFor="let priceCard of priceCards" class="price-card" [class.active]="priceCard.selected" (click)="selectPrice(priceCard)">
+          <!-- <div>
+            <div class="radio">
+              <div *ngIf="priceCard.selected"></div>
+            </div>
+          </div> -->
+          <div style="display: flex;justify-content: space-between; width: 100%;">
+            <p class="month-text">{{ priceCard.name }}</p>
+            <p class="price-text">{{ getPriceText(priceCard.value) }}</p>
+          </div>
+        </div>
+        <!-- <button (click)="addSubscription()" [disabled]="!selectedPrice || loading" *ngIf="priceCards.length" class="reg-btn" style="background-color: rgba(255, 113, 0, 1); margin-top: 20px;">{{'Подключить  ' | translate}}</button> -->
       </div>
+
       <div class="payment-total form-block">
-        <button class="reg-btn podpis-buy" (click)="pay()">{{'Оплатить' | translate}}</button>
+        <button class="reg-btn podpis-buy" (click)="pay()" style="background-color: rgba(255, 113, 0, 1)">{{'Подключить' | translate}}</button>
       </div>
     </div>
+  </div>
+
     <!--<div class="code-error personal-modal">
       <div class="code-error-wrap">F
         <h2>Ваш счет успешно пополнен</h2>
