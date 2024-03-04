@@ -22,6 +22,7 @@ export class ServicesListPage implements OnInit {
     private navCtrl: NavController
   ) { }
   ngOnInit(): void {
+    this.loading =  false;
     this.getServiceList();
     this.getAlphaBalance();
   }
@@ -48,7 +49,7 @@ export class ServicesListPage implements OnInit {
   }
   submit() {
     this.loading = true;
-    if(this.selectedPrice.price_uzs == 0) {
+    if(this.selectedPrice.price_uzs == 0 && this.authService.currentUser.issubscription) {
       this.loading = false;
       let data = {
         user_id: this.authService.currentUser.id,
@@ -67,6 +68,11 @@ export class ServicesListPage implements OnInit {
         this.loading = false;
         this.authService.alert('Ошибка', error.error.error);
       })
+    }
+    else if(!this.authService.currentUser.issubscription) {
+      this.loading = false;
+      this.authService.alert('Оформите подписку чтобы воспользоваться услугами Тирго', '');
+      this.router.navigate(['/addsubscribe'])
     }
     else {
       this.loading = false;

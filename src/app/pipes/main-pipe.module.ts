@@ -3,12 +3,14 @@ import {CommonModule} from '@angular/common';
 import {FormatTimePipe} from './format-time.pipe';
 import { NtobrPipe } from './ntobr.pipe';
 import { TransportType } from './transport-type.pipe';
+import { NumberFormatPipe } from './number-formant.pipe';
 
 @NgModule({
     declarations: [
         FormatTimePipe,
         NtobrPipe,
-        TransportType
+        TransportType,
+        NumberFormatPipe
     ],
     imports: [
         CommonModule
@@ -16,7 +18,9 @@ import { TransportType } from './transport-type.pipe';
     exports: [
         FormatTimePipe,
         NtobrPipe,
-        TransportType
+        TransportType,
+        NumberFormatPipe
+
     ]
 })
 export class MainPipeModule {
