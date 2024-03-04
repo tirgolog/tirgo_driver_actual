@@ -18,8 +18,8 @@
             </div>
           </div>
           <div>
-            <p class="month-text">{{ priceCard.name }}</p>
-            <p class="price-text">Цена: {{ priceCard.price_uzs }} сум</p>
+            <p class="month-text"> <span>{{ priceCard.name }}</span> </p>
+            <p class="price-text" >Цена: <span style="font-weight: bold;"> {{ priceCard.price_uzs == 0 ? 'Бесплатно(оформление в Тирго)' :  priceCard.price_uzs | numberFormat }} <span *ngIf="priceCard.price_uzs != 0">сум</span> </span> </p>
           </div>
         </div>
         <button (click)="submit()" [disabled]="!selectedPrice || loading" *ngIf="services" class="reg-btn" style="background-color: rgba(255, 113, 0, 1); margin-top: 20px;">{{'Оплатить' | translate}}</button>

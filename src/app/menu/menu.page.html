@@ -27,7 +27,7 @@
       <nav class="main-nav">
         <button (click)="goTo('/tabs/home/',true)"><ion-icon src="assets/img/main.svg"></ion-icon>{{'Главная' |
           translate}}</button>
-          <button *ngIf="!authService?.currentUser?.issubscription" (click)="goTo('/services-list/',true)"><ion-icon src="assets/img/document.svg"></ion-icon>{{'Услуги Tirgo Service' |
+          <button (click)="goTo('/services-list/',true)"><ion-icon src="assets/img/document.svg"></ion-icon>{{'Услуги Tirgo Service' |
             translate}}</button>
         <!--<button (click)="goTo('/mysubscribers/',false)"><ion-icon src="assets/img/Document.svg"></ion-icon>Мои подписки</button>-->
         <button (click)="goTo('/tabs/archive/',true)"><ion-icon src="assets/img/Calendar2.svg"></ion-icon>{{'Архив
