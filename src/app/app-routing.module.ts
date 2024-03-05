@@ -40,6 +40,10 @@ const routes: Routes = [
     loadChildren: () => import('./balance/balance.module').then(m => m.BalancePageModule)
   },
   {
+    path: 'balance-service',
+    loadChildren: () => import('./balance-service/balance-service.module').then(m => m.BalanceServicePageModule)
+  },
+  {
     path: 'mysubscribers',
     loadChildren: () => import('./mysubscribers/mysubscribers.module').then(m => m.MysubscribersPageModule)
   },
