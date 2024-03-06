@@ -12,9 +12,11 @@ import { NavController } from '@ionic/angular';
 })
 export class ServicesListPage implements OnInit {
   loading: boolean = false;
-  services: any[];
-  selectedPrice: any;
-  alpha_balance:number = 0
+  services: any[] = [];
+  selectedServices: any[] = [];
+  alpha_balance: number = 0;
+  amount_sum: number = 0;
+  formattedData: any[] = [];
   constructor(
     private authService: AuthenticationService,
     private iab: InAppBrowser,
@@ -22,7 +24,7 @@ export class ServicesListPage implements OnInit {
     private navCtrl: NavController
   ) { }
   ngOnInit(): void {
-    this.loading =  false;
+    this.loading = false;
     this.getServiceList();
     this.getAlphaBalance();
   }
@@ -30,57 +32,67 @@ export class ServicesListPage implements OnInit {
     this.authService.getServicesList().subscribe((res: any) => {
       if (res.status) {
         this.services = res.data;
-        this.selectedPrice = this.services[0];
-        this.services[0].selected = true;
+        // this.selectedServices.push(this.services[0]);        
+        // this.services[0].selected = true;
       }
     })
   }
   getAlphaBalance() {
-    this.authService.getAlhpaBalance(this.authService.currentUser.id).subscribe((res:any) => {
-      if(res.status) {
+    this.authService.getAlhpaBalance(this.authService.currentUser.id).subscribe((res: any) => {
+      if (res.status) {
         this.alpha_balance = res.total_balance;
       }
     })
   }
   selectService(selectedPriceCard) {
-    this.services.forEach(priceCard => priceCard.selected = false);
-    selectedPriceCard.selected = true;
-    this.selectedPrice = selectedPriceCard
+    selectedPriceCard.selected = !selectedPriceCard.selected;
+    this.selectedServices = this.services.filter(service => service.selected);
   }
   submit() {
-    this.loading = true;
-    if(this.selectedPrice.price_uzs == 0 && this.authService.currentUser.issubscription) {
-      this.loading = false;
-      let data = {
-        user_id: this.authService.currentUser.id,
-        services_id: this.selectedPrice.id,
-        price_uzs: this.selectedPrice.price_uzs,
-        price_kzs: this.selectedPrice.price_kzs,
-        rate: this.selectedPrice.rate
-      }
-      this.authService.freeService(data).subscribe((res:any) => {
-        if(res.status) {
-          this.loading = false;
-          this.authService.alert('Подписка успешно оформлена !', '');
-          this.router.navigate(['/tabs/home'])
-        }
-      }, error => {
-        this.loading = false;
-        this.authService.alert('Ошибка', error.error.error);
-      })
-    }
-    else if(!this.authService.currentUser.issubscription) {
+    if(!this.authService.currentUser.issubscription) {
       this.loading = false;
       this.authService.alert('Оформите подписку чтобы воспользоваться услугами Тирго', '');
       this.router.navigate(['/addsubscribe'])
     }
     else {
-      this.loading = false;
-      let base64 = btoa("m=65dc59df3c319dec9d8c3953;ac.UserID=" + this.authService.currentUser.id + ";a=" + this.selectedPrice.price_uzs + "00");
-      this.iab.create('https://checkout.paycom.uz/' + base64, '_system');
+      this.amount_sum = this.selectedServices.reduce((acc, service) => acc + Number(service.price_uzs), 0);
+      if (this.amount_sum > this.alpha_balance) {
+        this.loading = false;
+        let base64 = btoa("m=65dc59df3c319dec9d8c3953;ac.UserID=" + this.authService.currentUser.id + ";a=" + (+this.amount_sum - +this.alpha_balance) + "00");
+        this.iab.create('https://checkout.paycom.uz/' + base64, '_system');
+        this.amount_sum = 0;
+      }
+      else {
+        this.formattedData = [];
+        this.selectedServices.forEach(service => {
+          const formattedService = {
+            services_id: service.id,
+            price_uzs: service.price_uzs,
+            price_kzs: service.price_kzs,
+            rate: service.rate,
+          };
+          this.formattedData.push(formattedService);
+        });
+  
+        let dataSend = {
+          phone: this.authService.currentUser.phone,
+          user_id: this.authService.currentUser.id,
+          services: this.formattedData
+        };
+        this.authService.freeService(dataSend).subscribe((res: any) => {
+          if (res.status) {
+            this.loading = false;
+            this.authService.alert('Подписка успешно оформлена !', '');
+            this.router.navigate(['/tabs/home'])
+          }
+        }, error => {
+          this.loading = false;
+          this.authService.alert('Ошибка', error.error.error);
+        })
+      }
     }
   }
-  back(){
+  back() {
     this.navCtrl.back()
   }
 }

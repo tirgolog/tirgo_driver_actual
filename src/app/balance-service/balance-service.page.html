@@ -2,7 +2,7 @@
   <div class="wrapper-fluid-header">
     <div class="logo-wrap personal-head">
       <button class="top-back" (click)="back()"><img src="assets/img/arrow-left.svg" alt=""></button>
-      <h2>{{'Мой баланс' | translate}}</h2>
+      <h2>{{'Баланс Tirgo Service' | translate}}</h2>
       <div></div>
     </div>
   </div>
@@ -12,68 +12,72 @@
     <div class="body-wrap" *ngIf="authService.currentUser">
       <div class="cart-wrap">
         <img src="assets/img/logo.png" alt="">
-        <p class="cart-wrap-balance">Активные средства: {{authService.currentUser.balance}} <span></span></p>
-        <p class="cart-wrap-balance">Средства на запросе: {{authService.currentUser.balance_in_proccess}} <span></span>
-        </p>
-        <p class="cart-wrap-balance">Замороженные средства: {{authService.currentUser.balance_off}} <span></span></p>
+        <p class="cart-wrap-balance">Баланс: {{alpha_balance}} <span></span></p>
       </div>
       <p class="ion-no-padding ion-no-margin"><b>{{'Методы оплаты' | translate}}</b></p>
       <div class="payment-method">
         <div class="payment-method-wrap">
           <button (click)="selectmethodpay = 'click'" [ngClass]="{'selected': selectmethodpay === 'click'}"><img
-              src="assets/payment/click.svg" alt=""></button>
+                src="assets/payment/click.svg" alt=""></button>
           <button (click)="selectmethodpay = 'payme'" [ngClass]="{'selected': selectmethodpay === 'payme'}"><img
               src="assets/payment/payme.svg" alt=""></button>
         </div>
       </div>
-      <!-- <p class="ion-no-padding ion-no-margin"><b>{{'Сумма' | translate}}</b></p>
-      <div class="payment-total form-block">
-        <input type="text" inputmode="tel" name="total" placeholder="80 000" [(ngModel)]="amount">
-      </div> -->
       <div style="width: 100%;">
-        <p style="text-align: center; width: 100%;">{{'Подписки' | translate}}</p>
+        <p style="text-align: center; width: 100%;">{{'Услуги' | translate}}</p>
 
-      <div class="body-wrap form-block" style="width: 100%;">
+        <div class="body-wrap form-block" style="width: 100%;">
 
-        <div *ngFor="let priceCard of priceCards" class="price-card" [class.active]="priceCard.selected" (click)="selectPrice(priceCard)">
-          <!-- <div>
-            <div class="radio">
-              <div *ngIf="priceCard.selected"></div>
+          <div *ngFor="let priceCard of services" class="price-card" [class.active]="priceCard.selected"
+            (click)="selectPrice(priceCard)">
+            <div style="display: flex;justify-content: space-between; width: 100%;">
+              <p class="month-text">{{ priceCard.name }}</p>
+              <p class="price-text">{{ priceCard.price_uzs == 0 ? 'Бесплатно(оформление в Тирго)' :  priceCard.price_uzs | numberFormat }}</p>
             </div>
-          </div> -->
-          <div style="display: flex;justify-content: space-between; width: 100%;">
-            <p class="month-text">{{ priceCard.name }}</p>
-            <p class="price-text">{{ getPriceText(priceCard.value) }}</p>
           </div>
         </div>
-        <!-- <button (click)="addSubscription()" [disabled]="!selectedPrice || loading" *ngIf="priceCards.length" class="reg-btn" style="background-color: rgba(255, 113, 0, 1); margin-top: 20px;">{{'Подключить  ' | translate}}</button> -->
+
+        <div class="payment-total form-block">
+          <button [disabled]="selectedServices?.length == 0 || loading" class="reg-btn podpis-buy" (click)="pay()"
+            style="background-color: rgba(255, 113, 0, 1)">{{'Подключить' | translate}}</button>
+        </div>
       </div>
 
-      <div class="payment-total form-block">
-        <button class="reg-btn podpis-buy" (click)="pay()" style="background-color: rgba(255, 113, 0, 1)">{{'Подключить' | translate}}</button>
+      <div style="width: 100%; margin-top: 20px;" *ngIf="history?.length > 0">
+        <p style="text-align: center; width: 100%;">{{'История оформлений услуг' | translate}}</p>
+        <div class="" style="width: 100%; overflow-y: auto; max-height: 300px; padding: 50px 0;">
+
+          <div *ngFor="let item of history"  class="price-card" style="display: block !important;margin: 5px 0;">
+            <div style="width: 100%;color: white; display: flex;gap:10px">
+              <span>ID заказа:</span>
+              <span>{{item.id}}</span>
+            </div>
+            <div style="width: 100%;color: white; display: flex;gap:10px">
+              <span>ID услуги:</span>
+              <span>{{item.service_id}}</span>
+            </div>
+            <div style="width: 100%;color: white; display: flex;gap:10px">
+              <span>Тип:</span>
+              <span>{{item.name}}</span>
+            </div>
+            <div style="width: 100%;color: white; display: flex;gap:10px">
+              <span>Сумма:</span>
+              <span>{{item.price_uzs}}</span>
+            </div>
+            <div style="width: 100%;color: white; display: flex;gap:10px">
+              <span>Дата:</span>
+              <span>{{item.createAt | date : 'dd.MM.YYYY'}} </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-
-    <!--<div class="code-error personal-modal">
-      <div class="code-error-wrap">F
-        <h2>Ваш счет успешно пополнен</h2>
-          <button class="next-btn">На главную</button>
-      </div>
-    </div>-->
-  </div>
 </ion-content>
-<ion-footer class="my-footer">
-  <div class="bottom-wrap personal-bottom">
-    <button class="reg-btn podpis-buy" (click)="withdrawFromActivebalance()">{{'Снять средства' | translate}}</button>
-  </div>
-</ion-footer>
 
 <ion-card *ngIf="payConfirm">
   <ion-card-header>
     <ion-card-title style="text-align: center;">Ваша заявка принята на обработку</ion-card-title>
   </ion-card-header>
-
   <ion-button style="display: flex;" routerLink="/tabs">OK</ion-button>
-
 </ion-card>

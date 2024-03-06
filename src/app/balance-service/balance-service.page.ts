@@ -1,121 +1,148 @@
 import { Component, OnInit } from '@angular/core';
-import {NavController} from "@ionic/angular";
-import {InAppBrowser} from "@ionic-native/in-app-browser/ngx";
-import { ActivatedRoute } from '@angular/router';
-import { log } from 'console';
-import { AuthenticationService } from 'src/app/services/authentication.service';
-import { SocketService } from 'src/app/services/socket.service';
+import { NavController } from "@ionic/angular";
+import { AuthenticationService } from "../services/authentication.service";
+import { InAppBrowser } from "@ionic-native/in-app-browser/ngx";
+import { SocketService } from '../services/socket.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-balance-service',
+  selector: 'app-balance',
   templateUrl: './balance-service.page.html',
   styleUrls: ['./balance-service.page.scss'],
 })
 export class BalanceServicePage implements OnInit {
+  loading:boolean = false;
+  services
   selectmethodpay: string = 'click'
-  amount:string = '';
+  amount: string = '';
   payConfirm: boolean = false;
   priceCards
   selectedPrice
-  subscriptionId:any
+  selectedServices:any[]=[];
+  subscriptionId: any;
+  amount_sum: number = 0;
+  formattedData: any[]=[];
+  alpha_balance:number = 0;
+  history:any;
   constructor(
     private iab: InAppBrowser,
     private navCtrl: NavController,
-    public authService:AuthenticationService,
+    public authService: AuthenticationService,
     public socketService: SocketService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit() {
     this.updateDriverBalance();
     this.getPrice();
     this.route.queryParamMap.subscribe(params => {
-      if(params) {
+      if (params) {
         this.subscriptionId = params.get('subscription_id');
       }
     });
+    this.getHistory();
   }
-  
-  getPrice() {
-    this.authService.getSubscribtionsPrice().subscribe((res: any) => {
-      if (res.status) {
-        this.priceCards = res.data;
-        if (this.subscriptionId) {
-          this.priceCards = this.priceCards.filter(card => card.id == +this.subscriptionId);
-        }
-        if (this.priceCards.length > 0) {
-          this.selectedPrice = this.priceCards[0];
-          this.priceCards[0].selected = true;
-        }
+  getHistory() {
+    this.authService.serviceHistory(this.authService.currentUser.id).subscribe((res:any) => {
+      if(res.status) {
+        this.history = res.data;
       }
-    });
+    })
+  }
+  getAlphaBalance() {
+    this.authService.getAlhpaBalance(this.authService.currentUser.id).subscribe((res: any) => {
+      if (res.status) {
+        this.alpha_balance = res.total_balance;
+      }
+    })
+  }
+  getPrice() {
+    this.authService.getServicesList().subscribe((res: any) => {
+      if (res.status) {
+        this.services = res.data;
+        // this.selectedPrice = this.services[0];
+        // this.services[0].selected = true;
+      }
+    })
   }
   selectPrice(selectedPriceCard: any) {
-    this.priceCards.forEach(priceCard => priceCard.selected = false);
-    selectedPriceCard.selected = true;
-    this.selectedPrice = selectedPriceCard
+    selectedPriceCard.selected = !selectedPriceCard.selected;
+    this.selectedServices = this.services.filter(service => service.selected);
   }
-  getPriceText(value: number): string {
-    if (value === 7) {
-      this.amount = '80000'
-      return 'Цена: 80 000 сум';
-    } else if (value === 15) {
-      this.amount = '180000'
-      return 'Цена: 180 000 сум';
-    } else if (value === 47) {
-      this.amount = '570000'
-      return 'Цена: 570 000 сум';
-    } else {
-      return 'Unknown Price';
-    }
-  }
-  back(){
+  back() {
     this.navCtrl.back()
   }
-  async pay(){
-    if (this.amount){
-      if (this.selectmethodpay === 'click'){
-        this.iab.create('https://my.click.uz/services/pay?service_id=24721&merchant_id=17235&amount='+this.amount+'&transaction_param='+this.authService.currentUser!.id,'_system');
-      }else if(this.selectmethodpay === 'apelsin'){
-        /*if (this.expiry_date_card && this.card_number){
-          const res = await this.authService.getTokenCardApelsin(this.expiry_date_card,this.card_number).toPromise()
-          console.log(res)
-        } else {
-          const alert = await this.alertController.create({
-            header: 'Ошибка',
-            message: 'Введите данные карты',
-            buttons: ['OK']
-          });
-          await alert.present();
-        }*/
-      }else if(this.selectmethodpay === 'payme'){
-        let base64 = btoa("m=636ca5172cfb25761a99e6af;ac.UserID="+this.authService.currentUser.id+";a="+this.amount+"00");
-        this.iab.create('https://checkout.paycom.uz/'+base64,'_system');
+  async pay() {
+    if(!this.authService.currentUser.issubscription) {
+      this.loading = false;
+      this.authService.alert('Оформите подписку чтобы воспользоваться услугами Тирго', '');
+      this.router.navigate(['/addsubscribe'])
+    }
+    else {
+      this.amount_sum = this.selectedServices.reduce((acc, service) => acc + Number(service.price_uzs), 0);
+      if (this.amount_sum > this.alpha_balance) {
+        this.loading = false;
+        if(this.selectmethodpay === 'click') {
+          this.iab.create('https://my.click.uz/services/pay?service_id=32406&merchant_id=24561&amount='+ (this.amount_sum - +this.alpha_balance)+'&transaction_param='+this.authService.currentUser!.id,'_system');
+          this.amount_sum = 0;
+        }
+        else if(this.selectmethodpay === 'payme') {
+          let base64 = btoa("m=65dc59df3c319dec9d8c3953;ac.UserID=" + this.authService.currentUser.id + ";a=" + (+this.amount_sum - +this.alpha_balance) + "00");
+          this.iab.create('https://checkout.paycom.uz/' + base64, '_system');
+          this.amount_sum = 0;
+        }
       }
-    }else {
-      await this.authService.alert('Ошибка','Минимальная сумма оплаты 1000 UZS')
+      else {
+        this.formattedData = [];
+        this.selectedServices.forEach(service => {
+          const formattedService = {
+            services_id: service.id,
+            price_uzs: service.price_uzs,
+            price_kzs: service.price_kzs,
+            rate: service.rate,
+          };
+          this.formattedData.push(formattedService);
+        });
+  
+        let dataSend = {
+          phone: this.authService.currentUser.phone,
+          user_id: this.authService.currentUser.id,
+          services: this.formattedData
+        };
+        this.authService.freeService(dataSend).subscribe((res: any) => {
+          if (res.status) {
+            this.loading = false;
+            this.authService.alert('Подписка успешно оформлена !', '');
+            this.router.navigate(['/tabs/home'])
+          }
+        }, error => {
+          this.loading = false;
+          this.authService.alert('Ошибка', error.error.error);
+        })
+      }
     }
   }
   async withdrawFromActivebalance() {
-    if(this.authService.currentUser.balance > 0) {
+    if (this.authService.currentUser.balance > 0) {
       this.authService.withdrawBalance(this.authService.currentUser.id).subscribe((res: any) => {
-        if(res.status) {
+        if (res.status) {
           this.payConfirm = true;
         }
-        else if(!res.status && res.error == 'No enough balance') {
-           this.authService.alert('Ошибка','У вас нет активного баланса')
+        else if (!res.status && res.error == 'No enough balance') {
+          this.authService.alert('Ошибка', 'У вас нет активного баланса')
         }
-        else if(!res.status && res.error == 'No enough balance') {
-          this.authService.alert('Ошибка',res.error.toString());
-       }
+        else if (!res.status && res.error == 'No enough balance') {
+          this.authService.alert('Ошибка', res.error.toString());
+        }
       });
     } else {
-      await this.authService.alert('Ошибка','У вас нет активного баланса')
+      await this.authService.alert('Ошибка', 'У вас нет активного баланса')
     }
   }
   updateDriverBalance() {
-    this.socketService.updateDriverBalance().subscribe((res:any) => {
-      if(res) {
+    this.socketService.updateDriverBalance().subscribe((res: any) => {
+      if (res) {
         const data = JSON.parse(res);
         this.authService.currentUser.balance = data.balance;
         this.authService.currentUser.balance_off = data.balance_off;

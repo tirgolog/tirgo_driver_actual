@@ -679,4 +679,9 @@ export class AuthenticationService {
   freeService(data) {
     return this.http.post(API_URL + '/users/addDriverServices', data)
   }
+  serviceHistory(user_id) {
+    const sUrl = API_URL + '/users/services-transaction/user';
+    const body = {from:0, limit:50,userid:user_id} 
+    return this.http.post<any>(sUrl,body);
+  }
 }
