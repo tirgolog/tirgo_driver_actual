@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NavController } from "@ionic/angular";
 import { AuthenticationService } from "../services/authentication.service";
 import { InAppBrowser } from "@ionic-native/in-app-browser/ngx";
@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './balance-service.page.html',
   styleUrls: ['./balance-service.page.scss'],
 })
-export class BalanceServicePage implements OnInit, OnDestroy {
+export class BalanceServicePage implements OnInit {
   loading: boolean = false;
   services
   selectmethodpay: string = 'click'
@@ -32,12 +32,11 @@ export class BalanceServicePage implements OnInit, OnDestroy {
     public authService: AuthenticationService,
     public socketService: SocketService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
-    this.updateDriverBalance();
-    this.getPrice();
     this.route.queryParamMap.subscribe(params => {
       if (params) {
         this.subscriptionId = params.get('subscription_id');
@@ -45,6 +44,17 @@ export class BalanceServicePage implements OnInit, OnDestroy {
     });
     this.getHistory();
     this.checkShowButton();
+    this.getAlphaBalance();
+    this.updateDriverBalance();
+    this.getPrice();
+    this.socketService.updateTirgoServiceBalance().subscribe((res:any) => {
+      this.getAlphaBalance();
+      this.cdr.detectChanges();
+    })
+    this.socketService.updateTirgoServices().subscribe((res:any) => {
+      this.getPrice();
+      this.cdr.detectChanges();
+    })
   }
   getHistory() {
     this.authService.serviceHistory(this.authService.currentUser.id).subscribe((res: any) => {
@@ -54,9 +64,9 @@ export class BalanceServicePage implements OnInit, OnDestroy {
     })
   }
   getAlphaBalance() {
-    this.authService.getTirgoBalance(this.authService.currentUser.id).subscribe((res: any) => {
+    this.authService.getTirgoBalance(this.authService.currentUser).subscribe((res: any) => {
       if (res.status) {
-        this.alpha_balance = res.total_balance;
+        this.alpha_balance = res.data.balance;
       }
     })
   }
@@ -74,11 +84,6 @@ export class BalanceServicePage implements OnInit, OnDestroy {
     this.selectedServices = this.services.filter(service => service.selected);
   }
   back() {
-    console.log('this.priceCards' ,this.priceCards);
-    console.log('this.selectedServices' ,this.selectedServices);
-    console.log('this.services' ,this.services);
-    
-    // this.navCtrl.back();
     this.router.navigate(['/tabs/home']);
     this.services.forEach((v,k) => {
       if(v.selected) {
@@ -179,7 +184,11 @@ export class BalanceServicePage implements OnInit, OnDestroy {
   goToSupportAdmin() {
     this.iab.create('https://t.me/TIRGO_STOL_USLUG', '_system');
   }
-  ngOnDestroy() {
-    this.selectedServices = null;
+  doRefresh(event) {
+    setTimeout(() => {
+      event.target.complete();
+      this.getHistory();
+      this.getPrice();
+    }, 1000);
   }
 }

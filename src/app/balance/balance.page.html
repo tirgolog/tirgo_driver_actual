@@ -65,7 +65,7 @@
 </ion-content>
 <ion-footer class="my-footer">
   <div class="bottom-wrap personal-bottom">
-    <button class="reg-btn podpis-buy" (click)="withdrawFromActivebalance()">{{'Снять средства' | translate}}</button>
+    <button class="reg-btn podpis-buy" [disabled]="this.authService.currentUser.balance < 0" (click)="withdrawFromActivebalance()">{{'Снять средства' | translate}}</button>
   </div>
 </ion-footer>
 

@@ -69,4 +69,19 @@ export class SocketService {
             });
         });
     }
+
+    updateTirgoServiceBalance() {
+        return new Observable<any>(observer => {
+            this.socket.on('update-alpha-balance', (data:any) => {
+                observer.next(data);
+            });
+        });
+    }
+    updateTirgoServices() {
+        return new Observable<any>(observer => {
+            this.socket.on('update-services', (data:any) => {
+                observer.next(data);
+            });
+        });
+    }
 }

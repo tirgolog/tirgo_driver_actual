@@ -719,8 +719,9 @@ export class AuthenticationService {
     const body = { from: 0, limit: 50, userid: user_id }
     return this.http.post<any>(sUrl, body);
   }
-  getTirgoBalance(userId) {
-    const sUrl = API_URL + '/users/services-transaction/user/balanse' + userId;
-    return this.http.get<any>(sUrl);
+  getTirgoBalance(user) {
+    const sUrl = API_URL + '/users/services-transaction/user/balanse';
+    const body= {userid: user.id, phone: user.phone}
+    return this.http.post<any>(sUrl,body);
   }
 }
