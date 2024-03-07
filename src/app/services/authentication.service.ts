@@ -503,6 +503,36 @@ export class AuthenticationService {
     await alert.present();
   }
 
+  async alertAcceptPayment(header: string, selectmethodpay:string,amount:number) {
+    const alert = await this.alertController.create({
+      header: header,
+      cssClass: 'customAlert',
+      buttons: [
+        {
+          text: 'Отмена',
+          handler: async () => {
+            this.alertController.dismiss();
+          }
+        },
+        {
+          text: 'Ok',
+          handler: async () => {
+            console.log(selectmethodpay);
+            if (selectmethodpay === 'click') {
+              this.iab.create('https://my.click.uz/services/pay?service_id=32406&merchant_id=24561&amount=' + amount + '&transaction_param=' + this.currentUser!.id, '_system');
+            }
+            else if (selectmethodpay === 'payme') {
+              let base64 = btoa("m=65dc59df3c319dec9d8c3953;ac.UserID=" + this.currentUser.id + ";a=" + amount + "00");
+              this.iab.create('https://checkout.paycom.uz/' + base64, '_system');
+            }
+
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
   async alertSubscription(header: string, text: string) {
     const alert = await this.alertController.create({
       header: header,
@@ -673,7 +703,7 @@ export class AuthenticationService {
   }
 
   getAlhpaBalance(userId) {
-    const sUrl = API_URL + '/users/alpha-payment/'+userId;
+    const sUrl = API_URL + '/users/alpha-payment/' + userId;
     return this.http.get<any>(sUrl);
   }
   freeService(data) {
@@ -681,7 +711,16 @@ export class AuthenticationService {
   }
   serviceHistory(user_id) {
     const sUrl = API_URL + '/users/services-transaction/user';
-    const body = {from:0, limit:50,userid:user_id} 
-    return this.http.post<any>(sUrl,body);
+    const body = { from: 0, limit: 50, userid: user_id }
+    return this.http.post<any>(sUrl, body);
+  }
+  checkService(user_id) {
+    const sUrl = API_URL + '/users/services-transaction/user/days';
+    const body = { from: 0, limit: 50, userid: user_id }
+    return this.http.post<any>(sUrl, body);
+  }
+  getTirgoBalance(userId) {
+    const sUrl = API_URL + '/users/services-transaction/user/balanse' + userId;
+    return this.http.get<any>(sUrl);
   }
 }

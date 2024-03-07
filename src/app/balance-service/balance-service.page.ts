@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavController } from "@ionic/angular";
 import { AuthenticationService } from "../services/authentication.service";
 import { InAppBrowser } from "@ionic-native/in-app-browser/ngx";
@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './balance-service.page.html',
   styleUrls: ['./balance-service.page.scss'],
 })
-export class BalanceServicePage implements OnInit {
+export class BalanceServicePage implements OnInit, OnDestroy {
   loading: boolean = false;
   services
   selectmethodpay: string = 'click'
@@ -24,6 +24,8 @@ export class BalanceServicePage implements OnInit {
   formattedData: any[] = [];
   alpha_balance: number = 0;
   history: any;
+  showTgButton:boolean = false;
+
   constructor(
     private iab: InAppBrowser,
     private navCtrl: NavController,
@@ -42,6 +44,7 @@ export class BalanceServicePage implements OnInit {
       }
     });
     this.getHistory();
+    this.checkShowButton();
   }
   getHistory() {
     this.authService.serviceHistory(this.authService.currentUser.id).subscribe((res: any) => {
@@ -51,7 +54,7 @@ export class BalanceServicePage implements OnInit {
     })
   }
   getAlphaBalance() {
-    this.authService.getAlhpaBalance(this.authService.currentUser.id).subscribe((res: any) => {
+    this.authService.getTirgoBalance(this.authService.currentUser.id).subscribe((res: any) => {
       if (res.status) {
         this.alpha_balance = res.total_balance;
       }
@@ -71,7 +74,17 @@ export class BalanceServicePage implements OnInit {
     this.selectedServices = this.services.filter(service => service.selected);
   }
   back() {
-    this.navCtrl.back()
+    console.log('this.priceCards' ,this.priceCards);
+    console.log('this.selectedServices' ,this.selectedServices);
+    console.log('this.services' ,this.services);
+    
+    // this.navCtrl.back();
+    this.router.navigate(['/tabs/home']);
+    this.services.forEach((v,k) => {
+      if(v.selected) {
+        v.selected = false;
+      }
+    })
   }
   async pay() {
     if (!this.authService.currentUser.issubscription) {
@@ -82,16 +95,17 @@ export class BalanceServicePage implements OnInit {
     else {
       this.amount_sum = this.selectedServices.reduce((acc, service) => acc + Number(service.price_uzs), 0);
       if (this.amount_sum > this.alpha_balance) {
+        this.authService.alertAcceptPayment('Пополните свой баланс чтобы оформить услугу',this.selectmethodpay,this.amount_sum - +this.alpha_balance);
         this.loading = false;
-        if (this.selectmethodpay === 'click') {
-          this.iab.create('https://my.click.uz/services/pay?service_id=32406&merchant_id=24561&amount=' + (this.amount_sum - +this.alpha_balance) + '&transaction_param=' + this.authService.currentUser!.id, '_system');
-          this.amount_sum = 0;
-        }
-        else if (this.selectmethodpay === 'payme') {
-          let base64 = btoa("m=65dc59df3c319dec9d8c3953;ac.UserID=" + this.authService.currentUser.id + ";a=" + (+this.amount_sum - +this.alpha_balance) + "00");
-          this.iab.create('https://checkout.paycom.uz/' + base64, '_system');
-          this.amount_sum = 0;
-        }
+        this.amount_sum = 0;
+        // if (this.selectmethodpay === 'click') {
+        //   this.iab.create('https://my.click.uz/services/pay?service_id=32406&merchant_id=24561&amount=' + (this.amount_sum - +this.alpha_balance) + '&transaction_param=' + this.authService.currentUser!.id, '_system');
+        //   this.amount_sum = 0;
+        // }
+        // else if (this.selectmethodpay === 'payme') {
+        //   let base64 = btoa("m=65dc59df3c319dec9d8c3953;ac.UserID=" + this.authService.currentUser.id + ";a=" + (+this.amount_sum - +this.alpha_balance) + "00");
+        //   this.iab.create('https://checkout.paycom.uz/' + base64, '_system');
+        // }
       }
       else {
         this.formattedData = [];
@@ -113,7 +127,7 @@ export class BalanceServicePage implements OnInit {
         this.authService.freeService(dataSend).subscribe((res: any) => {
           if (res.status) {
             this.loading = false;
-            this.authService.alert('Подписка успешно оформлена !', '');
+            this.authService.alert('Услуга успешно оформлена !', '');
             this.router.navigate(['/tabs/home'])
           }
         }, error => {
@@ -154,5 +168,18 @@ export class BalanceServicePage implements OnInit {
         this.authService.currentUser.balance_in_proccess = data.balance_in_proccess;
       }
     })
+  }
+  checkShowButton() {
+    this.authService.checkService(this.authService.currentUser.id).subscribe((res:any) => {
+      if(res.status) {
+        res.data?.length > 0 ? this.showTgButton = true :  this.showTgButton = false;
+      }
+    })
+  }
+  goToSupportAdmin() {
+    this.iab.create('https://t.me/TIRGO_STOL_USLUG', '_system');
+  }
+  ngOnDestroy() {
+    this.selectedServices = null;
   }
 }
