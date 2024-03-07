@@ -49,7 +49,7 @@ export class ServicesListPage implements OnInit {
     this.selectedServices = this.services.filter(service => service.selected);
   }
   submit() {
-    if(!this.authService.currentUser.issubscription) {
+    if (!this.authService.currentUser.issubscription) {
       this.loading = false;
       this.authService.alert('Оформите подписку чтобы воспользоваться услугами Тирго', '');
       this.router.navigate(['/addsubscribe'])
@@ -73,7 +73,7 @@ export class ServicesListPage implements OnInit {
           };
           this.formattedData.push(formattedService);
         });
-  
+
         let dataSend = {
           phone: this.authService.currentUser.phone,
           user_id: this.authService.currentUser.id,
@@ -86,8 +86,11 @@ export class ServicesListPage implements OnInit {
             this.router.navigate(['/tabs/home'])
           }
         }, error => {
-          this.loading = false;
-          this.authService.alert('Ошибка', error.error.error);
+          if (error.error.error = 'Недостаточно средств на балансе') {
+            this.loading = false;
+            this.router.navigate(['/balance'])
+            this.authService.alert('Ошибка', error.error.error);
+          }
         })
       }
     }

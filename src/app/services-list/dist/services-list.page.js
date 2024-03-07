@@ -86,8 +86,11 @@ var ServicesListPage = /** @class */ (function () {
                         _this.router.navigate(['/tabs/home']);
                     }
                 }, function (error) {
-                    _this.loading = false;
-                    _this.authService.alert('Ошибка', error.error.error);
+                    if (error.error.error = 'Недостаточно средств на балансе') {
+                        _this.loading = false;
+                        _this.router.navigate(['/balance']);
+                        _this.authService.alert('Ошибка', error.error.error);
+                    }
                 });
             }
         }

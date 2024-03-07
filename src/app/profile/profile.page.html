@@ -16,8 +16,8 @@
       <div class="autorize">
 
         <p><b>{{'Ваше имя' | translate}}</b></p>
-        <!-- <input type="text" name="name" placeholder="Укажите Ваше имя" readonly [(ngModel)]="name"
-          (click)="this.authService.alert('Ошибка','Изменение имени временно недоступно')"> -->
+        <input type="text" name="name" placeholder="Укажите Ваше имя" readonly [(ngModel)]="name"
+          (click)="this.authService.alert('Ошибка','Изменение имени временно недоступно')">
 
         <p><b>{{'Телефон' | translate}}</b></p>
         <input type="text" name="name" readonly (click)="authService.alert('Упс','Телефон невозможно изменить')"

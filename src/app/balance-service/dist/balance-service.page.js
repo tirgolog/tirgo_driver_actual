@@ -152,8 +152,13 @@ var BalanceServicePage = /** @class */ (function () {
                                 _this.router.navigate(['/tabs/home']);
                             }
                         }, function (error) {
-                            _this.loading = false;
-                            _this.authService.alert('Ошибка', error.error.error);
+                            if (error.error.error = 'Недостаточно средств на балансе') {
+                                _this.authService.alert('Ошибка', error.error.error);
+                            }
+                            else {
+                                _this.loading = false;
+                                _this.authService.alert('Ошибка', error.error.error);
+                            }
                         });
                     }
                 }

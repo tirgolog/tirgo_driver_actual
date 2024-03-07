@@ -11,19 +11,19 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./balance-service.page.scss'],
 })
 export class BalanceServicePage implements OnInit {
-  loading:boolean = false;
+  loading: boolean = false;
   services
   selectmethodpay: string = 'click'
   amount: string = '';
   payConfirm: boolean = false;
   priceCards
   selectedPrice
-  selectedServices:any[]=[];
+  selectedServices: any[] = [];
   subscriptionId: any;
   amount_sum: number = 0;
-  formattedData: any[]=[];
-  alpha_balance:number = 0;
-  history:any;
+  formattedData: any[] = [];
+  alpha_balance: number = 0;
+  history: any;
   constructor(
     private iab: InAppBrowser,
     private navCtrl: NavController,
@@ -44,8 +44,8 @@ export class BalanceServicePage implements OnInit {
     this.getHistory();
   }
   getHistory() {
-    this.authService.serviceHistory(this.authService.currentUser.id).subscribe((res:any) => {
-      if(res.status) {
+    this.authService.serviceHistory(this.authService.currentUser.id).subscribe((res: any) => {
+      if (res.status) {
         this.history = res.data;
       }
     })
@@ -74,7 +74,7 @@ export class BalanceServicePage implements OnInit {
     this.navCtrl.back()
   }
   async pay() {
-    if(!this.authService.currentUser.issubscription) {
+    if (!this.authService.currentUser.issubscription) {
       this.loading = false;
       this.authService.alert('Оформите подписку чтобы воспользоваться услугами Тирго', '');
       this.router.navigate(['/addsubscribe'])
@@ -83,11 +83,11 @@ export class BalanceServicePage implements OnInit {
       this.amount_sum = this.selectedServices.reduce((acc, service) => acc + Number(service.price_uzs), 0);
       if (this.amount_sum > this.alpha_balance) {
         this.loading = false;
-        if(this.selectmethodpay === 'click') {
-          this.iab.create('https://my.click.uz/services/pay?service_id=32406&merchant_id=24561&amount='+ (this.amount_sum - +this.alpha_balance)+'&transaction_param='+this.authService.currentUser!.id,'_system');
+        if (this.selectmethodpay === 'click') {
+          this.iab.create('https://my.click.uz/services/pay?service_id=32406&merchant_id=24561&amount=' + (this.amount_sum - +this.alpha_balance) + '&transaction_param=' + this.authService.currentUser!.id, '_system');
           this.amount_sum = 0;
         }
-        else if(this.selectmethodpay === 'payme') {
+        else if (this.selectmethodpay === 'payme') {
           let base64 = btoa("m=65dc59df3c319dec9d8c3953;ac.UserID=" + this.authService.currentUser.id + ";a=" + (+this.amount_sum - +this.alpha_balance) + "00");
           this.iab.create('https://checkout.paycom.uz/' + base64, '_system');
           this.amount_sum = 0;
@@ -104,7 +104,7 @@ export class BalanceServicePage implements OnInit {
           };
           this.formattedData.push(formattedService);
         });
-  
+
         let dataSend = {
           phone: this.authService.currentUser.phone,
           user_id: this.authService.currentUser.id,
@@ -117,8 +117,13 @@ export class BalanceServicePage implements OnInit {
             this.router.navigate(['/tabs/home'])
           }
         }, error => {
-          this.loading = false;
-          this.authService.alert('Ошибка', error.error.error);
+          if (error.error.error = 'Недостаточно средств на балансе') {
+            this.authService.alert('Ошибка', error.error.error);
+          }
+          else {
+            this.loading = false;
+            this.authService.alert('Ошибка', error.error.error);
+          }
         })
       }
     }

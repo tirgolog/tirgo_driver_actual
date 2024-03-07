@@ -32,7 +32,7 @@
             (click)="selectPrice(priceCard)">
             <div style="display: flex;justify-content: space-between; width: 100%;">
               <p class="month-text">{{ priceCard.name }}</p>
-              <p class="price-text">{{ priceCard.price_uzs == 0 ? 'Бесплатно(оформление в Тирго)' :  priceCard.price_uzs | numberFormat }}</p>
+              <p class="price-text">{{ priceCard.price_uzs == 0 ? 'Бесплатно(оформление в Тирго)' :  priceCard.price_uzs | numberFormat }} <span *ngIf="priceCard.price_uzs != 0">сум</span></p>
             </div>
           </div>
         </div>
@@ -74,6 +74,7 @@
     </div>
   </div>
 </ion-content>
+
 
 <ion-card *ngIf="payConfirm">
   <ion-card-header>
