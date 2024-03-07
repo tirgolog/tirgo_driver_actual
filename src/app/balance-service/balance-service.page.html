@@ -2,36 +2,35 @@
   <div class="wrapper-fluid-header">
     <div class="logo-wrap personal-head">
       <button class="top-back" (click)="back()"><img src="assets/img/arrow-left.svg" alt=""></button>
-      <h2>{{'Баланс Tirgo Service' | translate}}</h2>
+      <h2>{{'Услуги Tirgo Service' | translate}}</h2>
       <div></div>
     </div>
   </div>
 </ion-header>
+
 <ion-content class="ion-no-padding ion-no-margin">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="1" pullMin="100" pullMax="200">
+    <ion-refresher-content class="loadingspinner" pullingIcon="arrow-dropdown" refreshingSpinner="circles">
+    </ion-refresher-content>
+  </ion-refresher>
   <div class="wrapper-fluid">
     <div class="body-wrap" *ngIf="authService.currentUser">
       <div class="cart-wrap">
         <img src="assets/img/logo.png" alt="">
-        <p class="cart-wrap-balance">Баланс: {{alpha_balance}} <span></span></p>
+        <p class="cart-wrap-balance" style="font-weight: bold;">Баланс: {{alpha_balance}} сум <span></span></p>
       </div>
 
-      <!-- <div style="width: 100%;margin:10px 0" *ngIf="showTgButton">
-        <button style="width: 100%; background: #00ABF1FF;padding: 10px;border-radius: 10px;color: white;display: flex;justify-content: center;gap:10px">
-          <ion-icon src="assets/img/tg.svg"></ion-icon>{{'Дополнительные услуги' | translate}}
-        </button>
-      </div> -->
-
       <button *ngIf="showTgButton" class="reg-btn podpis-buy" (click)="goToSupportAdmin()"
-            style="background-color: #00ABF1FF;margin: 10px 0;display: flex;align-items: center;justify-content: center;gap:10px">
-            <img src="assets/img/tg.svg" alt="">
-            <span>{{'Дополнительные услуги' | translate}}</span> 
-          </button>
+        style="background-color: #00ABF1FF;margin: 10px 0;display: flex;align-items: center;justify-content: center;gap:10px">
+        <img src="assets/img/tg.svg" alt="">
+        <span>{{'Дополнительные услуги' | translate}}</span>
+      </button>
 
       <p class="ion-no-padding ion-no-margin"><b>{{'Дополнительные услуги' | translate}}</b></p>
       <div class="payment-method">
         <div class="payment-method-wrap">
           <button (click)="selectmethodpay = 'click'" [ngClass]="{'selected': selectmethodpay === 'click'}"><img
-                src="assets/payment/click.svg" alt=""></button>
+              src="assets/payment/click.svg" alt=""></button>
           <button (click)="selectmethodpay = 'payme'" [ngClass]="{'selected': selectmethodpay === 'payme'}"><img
               src="assets/payment/payme.svg" alt=""></button>
         </div>
@@ -40,12 +39,15 @@
         <p style="text-align: center; width: 100%;">{{'Услуги' | translate}}</p>
 
         <div class="body-wrap form-block" style="width: 100%;">
-
           <div *ngFor="let priceCard of services" class="price-card" [class.active]="priceCard.selected"
             (click)="selectPrice(priceCard)">
-            <div style="display: flex;justify-content: space-between; width: 100%;">
-              <p class="month-text">{{ priceCard.name }}</p>
-              <p class="price-text">{{ priceCard.price_uzs == 0 ? 'Бесплатно(оформление в Тирго)' :  priceCard.price_uzs | numberFormat }} <span *ngIf="priceCard.price_uzs != 0">сум</span></p>
+            <div class="radio">
+              <div *ngIf="priceCard.selected"></div>
+            </div>
+            <div >
+              <p class="month-text">{{ priceCard.name }}:</p>
+              <p class="price-text" style="font-weight: bold;">{{ priceCard.price_uzs == 0 ? 'Бесплатно(оформление в Тирго)' : priceCard.price_uzs
+                | numberFormat }} <span *ngIf="priceCard.price_uzs != 0">сум</span></p>
             </div>
           </div>
         </div>
@@ -60,7 +62,7 @@
         <p style="text-align: center; width: 100%;">{{'История оформлений услуг' | translate}}</p>
         <div class="" style="width: 100%; overflow-y: auto; max-height: 300px; padding: 50px 0;">
 
-          <div *ngFor="let item of history"  class="price-card" style="display: block !important;margin: 5px 0;">
+          <div *ngFor="let item of history" class="price-card" style="display: block !important;margin: 5px 0;">
             <div style="width: 100%;color: white; display: flex;gap:10px">
               <span>ID заказа:</span>
               <span>{{item.id}}</span>
@@ -75,7 +77,8 @@
             </div>
             <div style="width: 100%;color: white; display: flex;gap:10px">
               <span>Сумма:</span>
-              <span>{{item.price_uzs}}</span>
+              <span>{{ item.price_uzs == 0 ? 'Бесплатно(оформление в Тирго)' : item.price_uzs
+                | numberFormat }} <span *ngIf="item.price_uzs != 0">сум</span></span>
             </div>
             <div style="width: 100%;color: white; display: flex;gap:10px">
               <span>Дата:</span>
