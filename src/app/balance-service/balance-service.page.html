@@ -14,7 +14,20 @@
         <img src="assets/img/logo.png" alt="">
         <p class="cart-wrap-balance">Баланс: {{alpha_balance}} <span></span></p>
       </div>
-      <p class="ion-no-padding ion-no-margin"><b>{{'Методы оплаты' | translate}}</b></p>
+
+      <!-- <div style="width: 100%;margin:10px 0" *ngIf="showTgButton">
+        <button style="width: 100%; background: #00ABF1FF;padding: 10px;border-radius: 10px;color: white;display: flex;justify-content: center;gap:10px">
+          <ion-icon src="assets/img/tg.svg"></ion-icon>{{'Дополнительные услуги' | translate}}
+        </button>
+      </div> -->
+
+      <button *ngIf="showTgButton" class="reg-btn podpis-buy" (click)="goToSupportAdmin()"
+            style="background-color: #00ABF1FF;margin: 10px 0;display: flex;align-items: center;justify-content: center;gap:10px">
+            <img src="assets/img/tg.svg" alt="">
+            <span>{{'Дополнительные услуги' | translate}}</span> 
+          </button>
+
+      <p class="ion-no-padding ion-no-margin"><b>{{'Дополнительные услуги' | translate}}</b></p>
       <div class="payment-method">
         <div class="payment-method-wrap">
           <button (click)="selectmethodpay = 'click'" [ngClass]="{'selected': selectmethodpay === 'click'}"><img
@@ -39,7 +52,7 @@
 
         <div class="payment-total form-block">
           <button [disabled]="selectedServices?.length == 0 || loading" class="reg-btn podpis-buy" (click)="pay()"
-            style="background-color: rgba(255, 113, 0, 1)">{{'Подключить' | translate}}</button>
+            style="background-color: rgba(255, 113, 0, 1)">{{'Оформить' | translate}}</button>
         </div>
       </div>
 
