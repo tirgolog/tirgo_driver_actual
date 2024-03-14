@@ -20,11 +20,6 @@
         <p class="cart-wrap-balance" style="font-weight: bold;">Баланс: {{alpha_balance}} сум <span></span></p>
       </div>
 
-      <button *ngIf="showTgButton" class="reg-btn podpis-buy" (click)="goToSupportAdmin()"
-        style="background-color: #00ABF1FF;margin: 10px 0;display: flex;align-items: center;justify-content: center;gap:10px">
-        <img src="assets/img/tg.svg" alt="">
-        <span>{{'Дополнительные услуги' | translate}}</span>
-      </button>
 
       <p class="ion-no-padding ion-no-margin"><b>{{'Метод оплаты' | translate}}</b></p>
       <div class="payment-method">
@@ -38,35 +33,42 @@
       <div style="width: 100%;">
         <p style="text-align: center; width: 100%;">{{'Услуги' | translate}}</p>
 
-        <div class="body-wrap form-block" style="width: 100%;">
+        <div class="body-wrap form-block" style="width: 100%;padding-left: 0 !important;padding-right: 0 !important;">
           <div *ngFor="let priceCard of services" class="price-card" [class.active]="priceCard.selected"
             (click)="selectPrice(priceCard)">
-            <div class="radio">
+            <!-- <div class="radio">
               <div *ngIf="priceCard.selected"></div>
-            </div>
-            <div >
+            </div> -->
+            <div>
               <p class="month-text">{{ priceCard.name }}:</p>
-              <p class="price-text" style="font-weight: bold;">{{ priceCard.price_uzs == 0 ? 'Бесплатно(оформление в Тирго)' : priceCard.price_uzs
+              <p class="price-text" style="font-weight: bold;">{{ priceCard.price_uzs == 0 ? 'Бесплатно (оформление в
+                Тирго)' : priceCard.price_uzs
                 | numberFormat }} <span *ngIf="priceCard.price_uzs != 0">сум</span></p>
             </div>
           </div>
         </div>
 
-        <div class="payment-total form-block">
+        <div style="margin-bottom: 10px;" class="payment-total form-block">
           <button [disabled]="selectedServices?.length == 0 || loading" class="reg-btn podpis-buy" (click)="pay()"
             style="background-color: rgba(255, 113, 0, 1)">{{'Оформить' | translate}}</button>
         </div>
+        <button *ngIf="showTgButton" class="reg-btn podpis-buy" (click)="goToSupportAdmin()"
+          style="background-color: #00ABF1FF;margin: 30px 0;display: flex;align-items: center;justify-content: center;gap:10px">
+          <img src="assets/img/tg.svg" alt="">
+          <span>{{'Дополнительные услуги' | translate}}</span>
+        </button>
+
       </div>
 
       <div style="width: 100%; margin-top: 20px;" *ngIf="history?.length > 0">
         <p style="text-align: center; width: 100%;">{{'История оформлений услуг' | translate}}</p>
-        <div class="" style="width: 100%; overflow-y: auto; max-height: 300px; padding: 50px 0;">
+        <div style="width: 100%; overflow-y: auto; max-height: 300px; padding-top: 15px; padding-bottom:5px">
 
           <div *ngFor="let item of history" class="price-card" style="display: block !important;margin: 5px 0;">
-            <div style="width: 100%;color: white; display: flex;gap:10px">
-              <span>ID заказа:</span>
-              <span>{{item.id}}</span>
-            </div>
+           <div style="width: 100%;color: white; display: flex;gap:10px">
+               <span>ID заказа:</span>
+               <span>{{item.id}}</span>
+             </div> 
             <div style="width: 100%;color: white; display: flex;gap:10px">
               <span>ID услуги:</span>
               <span>{{item.service_id}}</span>
@@ -75,15 +77,17 @@
               <span>Тип:</span>
               <span>{{item.name}}</span>
             </div>
-            <div style="width: 100%;color: white; display: flex;gap:10px">
+
+              <div style="width: 100%;color: white; display: flex;gap:10px">
               <span>Сумма:</span>
               <span>{{ item.price_uzs == 0 ? 'Бесплатно(оформление в Тирго)' : item.price_uzs
                 | numberFormat }} <span *ngIf="item.price_uzs != 0">сум</span></span>
             </div>
+
             <div style="width: 100%;color: white; display: flex;gap:10px">
               <span>Дата:</span>
               <span>{{item.createAt | date : 'dd.MM.YYYY'}} </span>
-            </div>
+            </div> 
           </div>
         </div>
       </div>

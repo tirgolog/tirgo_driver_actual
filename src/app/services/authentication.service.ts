@@ -517,7 +517,6 @@ export class AuthenticationService {
         {
           text: 'Ok',
           handler: async () => {
-            console.log(selectmethodpay);
             if (selectmethodpay === 'click') {
               this.iab.create('https://my.click.uz/services/pay?service_id=32406&merchant_id=24561&amount=' + amount + '&transaction_param=' + this.currentUser!.id, '_system');
             }
@@ -526,6 +525,28 @@ export class AuthenticationService {
               this.iab.create('https://checkout.paycom.uz/' + base64, '_system');
             }
 
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+  async alertPayAndRedirectTg() {
+    const alert = await this.alertController.create({
+      header: 'Теперь вы можете оформить услугу.',
+      message: 'Перейдите Телеграм чтобы оформить документы.',
+      cssClass: 'customAlert',
+      buttons: [
+        {
+          text: 'Отмена',
+          handler: async () => {
+            this.alertController.dismiss();
+          }
+        },
+        {
+          text: 'Перейти',
+          handler: async () => {
+            this.iab.create('https://t.me/TIRGO_STOL_USLUG', '_system');
           }
         }
       ]

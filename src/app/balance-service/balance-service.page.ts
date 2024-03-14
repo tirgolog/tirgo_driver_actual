@@ -49,6 +49,11 @@ export class BalanceServicePage implements OnInit {
     this.getPrice();
     this.socketService.updateTirgoServiceBalance().subscribe((res:any) => {
       this.getAlphaBalance();
+      this.getPrice();
+      this.getHistory();
+      this.checkShowButton();
+      this.getAlphaBalance();
+      this.updateDriverBalance();
       this.cdr.detectChanges();
     })
     this.socketService.updateTirgoServices().subscribe((res:any) => {
@@ -59,9 +64,13 @@ export class BalanceServicePage implements OnInit {
   getHistory() {
     this.authService.serviceHistory(this.authService.currentUser.id).subscribe((res: any) => {
       if (res.status) {
-        this.history = res.data;
+        if (Array.isArray(res.data)) {
+          this.history = res.data.slice(0, 10);
+        } else {
+          this.history = [];
+        }
       }
-    })
+    });
   }
   getAlphaBalance() {
     this.authService.getTirgoBalance(this.authService.currentUser).subscribe((res: any) => {
@@ -132,8 +141,7 @@ export class BalanceServicePage implements OnInit {
         this.authService.freeService(dataSend).subscribe((res: any) => {
           if (res.status) {
             this.loading = false;
-            this.authService.alert('Услуга успешно оформлена !', '');
-            this.router.navigate(['/tabs/home'])
+            this.authService.alertPayAndRedirectTg();
           }
         }, error => {
           if (error.error.error = 'Недостаточно средств на балансе') {
