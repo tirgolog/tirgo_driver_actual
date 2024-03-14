@@ -41,7 +41,7 @@
             </div> -->
             <div>
               <p class="month-text">{{ priceCard.name }}:</p>
-              <p class="price-text" style="font-weight: bold;">{{ priceCard.price_uzs == 0 ? 'Бесплатно (оформление в
+              <p class="price-text" style="font-weight: bold;">Цена: {{ priceCard.price_uzs == 0 ? 'Бесплатно (оформление в
                 Тирго)' : priceCard.price_uzs
                 | numberFormat }} <span *ngIf="priceCard.price_uzs != 0">сум</span></p>
             </div>
