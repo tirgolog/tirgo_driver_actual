@@ -64,9 +64,13 @@ export class BalanceServicePage implements OnInit {
   getHistory() {
     this.authService.serviceHistory(this.authService.currentUser.id).subscribe((res: any) => {
       if (res.status) {
-        this.history = res.data;
+        if (Array.isArray(res.data)) {
+          this.history = res.data.slice(0, 10);
+        } else {
+          this.history = [];
+        }
       }
-    })
+    });
   }
   getAlphaBalance() {
     this.authService.getTirgoBalance(this.authService.currentUser).subscribe((res: any) => {

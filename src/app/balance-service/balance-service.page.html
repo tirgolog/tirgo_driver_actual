@@ -41,7 +41,7 @@
             </div> -->
             <div>
               <p class="month-text">{{ priceCard.name }}:</p>
-              <p class="price-text" style="font-weight: bold;">{{ priceCard.price_uzs == 0 ? 'Бесплатно(оформление в
+              <p class="price-text" style="font-weight: bold;">{{ priceCard.price_uzs == 0 ? 'Бесплатно (оформление в
                 Тирго)' : priceCard.price_uzs
                 | numberFormat }} <span *ngIf="priceCard.price_uzs != 0">сум</span></p>
             </div>
@@ -62,13 +62,13 @@
 
       <div style="width: 100%; margin-top: 20px;" *ngIf="history?.length > 0">
         <p style="text-align: center; width: 100%;">{{'История оформлений услуг' | translate}}</p>
-        <div style="width: 100%; overflow-y: auto; max-height: 300px; padding-top: 50px; padding-bottom:5px">
+        <div style="width: 100%; overflow-y: auto; max-height: 300px; padding-top: 15px; padding-bottom:5px">
 
           <div *ngFor="let item of history" class="price-card" style="display: block !important;margin: 5px 0;">
-            <!-- <div style="width: 100%;color: white; display: flex;gap:10px">
-               <span>ID сервиса:</span>
+           <div style="width: 100%;color: white; display: flex;gap:10px">
+               <span>ID заказа:</span>
                <span>{{item.id}}</span>
-             </div> -->
+             </div> 
             <div style="width: 100%;color: white; display: flex;gap:10px">
               <span>ID услуги:</span>
               <span>{{item.service_id}}</span>
@@ -78,7 +78,7 @@
               <span>{{item.name}}</span>
             </div>
 
-            <!--  <div style="width: 100%;color: white; display: flex;gap:10px">
+              <div style="width: 100%;color: white; display: flex;gap:10px">
               <span>Сумма:</span>
               <span>{{ item.price_uzs == 0 ? 'Бесплатно(оформление в Тирго)' : item.price_uzs
                 | numberFormat }} <span *ngIf="item.price_uzs != 0">сум</span></span>
@@ -87,7 +87,7 @@
             <div style="width: 100%;color: white; display: flex;gap:10px">
               <span>Дата:</span>
               <span>{{item.createAt | date : 'dd.MM.YYYY'}} </span>
-            </div> -->
+            </div> 
           </div>
         </div>
       </div>
