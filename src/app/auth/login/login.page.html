@@ -43,16 +43,30 @@
       </ion-item>
     </ng-container>
     <div class="bottom-wrap autorize-btns">
-      <button class="classic-btn" *ngIf="!codeon" [disabled]="loading" (click)="signIn()">
+      <button class="classic-btn" *ngIf="!codeon" [disabled]="loading" (click)="signIn(false)">
         <ng-container *ngIf="!loading">{{'Отправить СМС' | translate}}</ng-container>
+        <ng-container *ngIf="loading"><ion-spinner></ion-spinner></ng-container>
+      </button>
+      <button class="classic-btn" *ngIf="!codeon" [disabled]="loading" (click)="signIn(true)">
+        <ng-container *ngIf="!loading">{{'Получить код в Telegram' | translate}}</ng-container>
         <ng-container *ngIf="loading"><ion-spinner></ion-spinner></ng-container>
       </button>
       <button class="classic-btn" *ngIf="codeon" (click)="verifyCode()">
         <ng-container *ngIf="!loading">{{'Продолжить' | translate}}</ng-container>
         <ng-container *ngIf="loading"><ion-spinner></ion-spinner></ng-container>
       </button>
-      <button class="support-btn" *ngIf="codeon && timer === 0" (click)="signIn()">
+
+      <button *ngIf="codeon" class="reg-btn " (click)="authService.goToVerifyCodeTg()"
+        style="background-color: #00ABF1FF;margin: 30px 0;display: flex;align-items: center;justify-content: center;gap:10px">
+        <span style="width: none !important;">{{'Перейти в телеграмму' | translate}}</span>
+      </button>
+
+      <button class="support-btn" *ngIf="codeon && timer === 0" (click)="signIn(false)">
         <ng-container *ngIf="!loading">{{'Отправить СМС' | translate}}</ng-container>
+        <ng-container *ngIf="loading"><ion-spinner></ion-spinner></ng-container>
+      </button>
+      <button class="support-btn" *ngIf="codeon && timer === 0" (click)="signIn(true)">
+        <ng-container *ngIf="!loading">{{'Получить код в Telegram' | translate}}</ng-container>
         <ng-container *ngIf="loading"><ion-spinner></ion-spinner></ng-container>
       </button>
       <button class="support-btn" (click)="authService.goToSupport()"><img src="assets/img/support.svg"

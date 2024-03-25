@@ -107,6 +107,9 @@ export class AuthenticationService {
   goToSupport() {
     this.iab.create('https://t.me/tirgosupportbot', '_system');
   }
+  goToVerifyCodeTg() {
+    this.iab.create('https://t.me/TIRGO_BOT', '_system');
+  }
   goToSupportAdmin() {
     if (!this.currentUser.to_subscription) {
       this.alertSubscription('Необходимо подключить подписку для этой услуги', '')
@@ -118,10 +121,10 @@ export class AuthenticationService {
     return String(num).padStart(6, '0');
   }
 
-  loginUser(phone: string, country_code: string) {
+  loginUser(phone: string, country_code: string,isTelegram:boolean) {
     const sUrl = API_URL + '/users/login';
     const body = JSON.stringify({
-      phone, country_code
+      phone, country_code,isTelegram
     });
     return this.http.post<any>(sUrl, body);
   }

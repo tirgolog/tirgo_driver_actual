@@ -64,7 +64,6 @@ export class LoginPage{
     // this.getPermissionLocation();
   }
 
-
   setAutocompleteAttribute() {
     if (this.passInput) {
       const nativeInput = this.passInput.getInputElement();
@@ -84,7 +83,7 @@ export class LoginPage{
   async recoverLogin(){
     await this.router.navigate(['recoverlogin']);
   }
-  async signIn(){
+  async signIn(isTelegram){
     this.loading = true;
     if (this.phone.length < this.mask.length){
       await this.authService.alert('Ошибка','Введите корректный номер телефона')
@@ -96,7 +95,7 @@ export class LoginPage{
       await this.authService.alert('Ошибка','Требуется принять политику конфиденциальности')
       this.loading = false;
     }else {
-      await this.authService.loginUser(this.prefix + '' + this.phone,this.country_code).toPromise()
+      await this.authService.loginUser(this.prefix + '' + this.phone,this.country_code,isTelegram).toPromise()
           .then(async (res) => {
             if (res.status){
               this.codeon = true;
@@ -150,5 +149,4 @@ export class LoginPage{
     this.mask = item.mask ? item.mask:' (00) 000-00-00';
     this.country_code = item.code
   }
-
 }

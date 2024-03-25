@@ -145,6 +145,9 @@ var AuthenticationService = /** @class */ (function () {
     AuthenticationService.prototype.goToSupport = function () {
         this.iab.create('https://t.me/tirgosupportbot', '_system');
     };
+    AuthenticationService.prototype.goToVerifyCodeTg = function () {
+        this.iab.create('https://t.me/TIRGO_BOT', '_system');
+    };
     AuthenticationService.prototype.goToSupportAdmin = function () {
         if (!this.currentUser.to_subscription) {
             this.alertSubscription('Необходимо подключить подписку для этой услуги', '');
@@ -156,10 +159,10 @@ var AuthenticationService = /** @class */ (function () {
     AuthenticationService.prototype.addLeadingZeros = function (num) {
         return String(num).padStart(6, '0');
     };
-    AuthenticationService.prototype.loginUser = function (phone, country_code) {
+    AuthenticationService.prototype.loginUser = function (phone, country_code, isTelegram) {
         var sUrl = API_URL + '/users/login';
         var body = JSON.stringify({
-            phone: phone, country_code: country_code
+            phone: phone, country_code: country_code, isTelegram: isTelegram
         });
         return this.http.post(sUrl, body);
     };
@@ -544,6 +547,94 @@ var AuthenticationService = /** @class */ (function () {
             });
         });
     };
+    AuthenticationService.prototype.alertAcceptPayment = function (header, selectmethodpay, amount) {
+        return __awaiter(this, void 0, void 0, function () {
+            var alert;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.alertController.create({
+                            header: header,
+                            cssClass: 'customAlert',
+                            buttons: [
+                                {
+                                    text: 'Отмена',
+                                    handler: function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            this.alertController.dismiss();
+                                            return [2 /*return*/];
+                                        });
+                                    }); }
+                                },
+                                {
+                                    text: 'Ok',
+                                    handler: function () { return __awaiter(_this, void 0, void 0, function () {
+                                        var base64;
+                                        return __generator(this, function (_a) {
+                                            if (selectmethodpay === 'click') {
+                                                this.iab.create('https://my.click.uz/services/pay?service_id=32406&merchant_id=24561&amount=' + amount + '&transaction_param=' + this.currentUser.id, '_system');
+                                            }
+                                            else if (selectmethodpay === 'payme') {
+                                                base64 = btoa("m=65dc59df3c319dec9d8c3953;ac.UserID=" + this.currentUser.id + ";a=" + amount + "00");
+                                                this.iab.create('https://checkout.paycom.uz/' + base64, '_system');
+                                            }
+                                            return [2 /*return*/];
+                                        });
+                                    }); }
+                                }
+                            ]
+                        })];
+                    case 1:
+                        alert = _a.sent();
+                        return [4 /*yield*/, alert.present()];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    AuthenticationService.prototype.alertPayAndRedirectTg = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var alert;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.alertController.create({
+                            header: 'Теперь вы можете оформить услугу.',
+                            message: 'Перейдите Телеграм чтобы оформить документы.',
+                            cssClass: 'customAlert',
+                            buttons: [
+                                {
+                                    text: 'Отмена',
+                                    handler: function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            this.alertController.dismiss();
+                                            return [2 /*return*/];
+                                        });
+                                    }); }
+                                },
+                                {
+                                    text: 'Перейти',
+                                    handler: function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            this.iab.create('https://t.me/TIRGO_STOL_USLUG', '_system');
+                                            return [2 /*return*/];
+                                        });
+                                    }); }
+                                }
+                            ]
+                        })];
+                    case 1:
+                        alert = _a.sent();
+                        return [4 /*yield*/, alert.present()];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
     AuthenticationService.prototype.alertSubscription = function (header, text) {
         return __awaiter(this, void 0, void 0, function () {
             var alert;
@@ -763,6 +854,16 @@ var AuthenticationService = /** @class */ (function () {
     AuthenticationService.prototype.serviceHistory = function (user_id) {
         var sUrl = API_URL + '/users/services-transaction/user';
         var body = { from: 0, limit: 50, userid: user_id };
+        return this.http.post(sUrl, body);
+    };
+    AuthenticationService.prototype.checkService = function (user_id) {
+        var sUrl = API_URL + '/users/services-transaction/user/days';
+        var body = { from: 0, limit: 50, userid: user_id };
+        return this.http.post(sUrl, body);
+    };
+    AuthenticationService.prototype.getTirgoBalance = function (user) {
+        var sUrl = API_URL + '/users/services-transaction/user/balanse';
+        var body = { userid: user.id, phone: user.phone };
         return this.http.post(sUrl, body);
     };
     var AuthenticationService_1;
