@@ -1,9 +1,9 @@
 <ion-content class="ion-no-padding ion-no-margin">
   <div class="wrapper-fluid">
     <div class="logo-wrap">
-      <!--<button class="top-back" (click)="back()">
+      <button class="top-back" (click)="back()">
         <img src="assets/img/arrow-left.svg" alt="">
-      </button>-->
+      </button>
       <img src="/assets/logos/tirgo-logo.png" alt="">
     </div>
     <div class="body-wrap form-block">
@@ -17,7 +17,8 @@
         </span>
         <ng-container *ngIf="codeon">
           <span class="input-mode-code">
-            <label for="pass">{{'Введите код из смс отправленный на номер телефона' | translate}} {{prefix}}
+            <label for="pass" style="font-size: 17px !important;">
+              {{isTelegram ? 'Введите код отправленный на ваш телеграмм аккаунт' : 'Введите код из смс отправленный на номер телефона' | translate}} {{prefix}}
               {{phone}}</label>
             <input id="pass" autocomplete="one-time-code" #passInput type="tel" name="pass" [(ngModel)]="code">
           </span>
@@ -47,45 +48,32 @@
         <ng-container *ngIf="!loading">{{'Отправить СМС' | translate}}</ng-container>
         <ng-container *ngIf="loading"><ion-spinner></ion-spinner></ng-container>
       </button>
-      <!-- <button class="classic-btn" *ngIf="!codeon" [disabled]="loading" (click)="signIn(true)">
-        <ng-container *ngIf="!loading">{{'Получить код в Telegram' | translate}}</ng-container>
-        <ng-container *ngIf="loading"><ion-spinner></ion-spinner></ng-container>
-      </button> -->
-      <button class="support-btn" *ngIf="!codeon" (click)="signIn(true)"
-        style="background-color: #00ABF1FF;margin: 30px 0;display: flex;align-items: center;justify-content:
-        center;gap:10px">
-        <img *ngIf="!loading" src="assets/img/tg.svg" alt="">
+  
+      <button class="classic-btn" *ngIf="!codeon" (click)="signIn(true)">
         <ng-container *ngIf="!loading">{{'Получить код в Telegram' | translate}}</ng-container>
         <ng-container *ngIf="loading"><ion-spinner></ion-spinner></ng-container>
       </button>
+
       <button class="classic-btn" *ngIf="codeon" (click)="verifyCode()">
         <ng-container *ngIf="!loading">{{'Продолжить' | translate}}</ng-container>
         <ng-container *ngIf="loading"><ion-spinner></ion-spinner></ng-container>
       </button>
 
-      <button *ngIf="codeon" class="reg-btn " (click)="authService.goToVerifyCodeTg()"
+      <button *ngIf="codeon && isTelegram" class="reg-btn " (click)="authService.goToVerifyCodeTg()"
         style="background-color: #00ABF1FF;margin: 30px 0;display: flex;align-items: center;justify-content: center;gap:10px">
         <span style="width: none !important;">{{'Перейти в телеграмму' | translate}}</span>
       </button>
 
-      <button class="support-btn" *ngIf="codeon && timer === 0" (click)="signIn(false)">
+      <button class="classic-btn" *ngIf="codeon && timer === 0 && !isTelegram" (click)="signIn(false)">
         <ng-container *ngIf="!loading">{{'Отправить СМС' | translate}}</ng-container>
         <ng-container *ngIf="loading"><ion-spinner></ion-spinner></ng-container>
       </button>
-      <!-- <button class="support-btn" *ngIf="codeon && timer === 0" (click)="signIn(true)">
-        <ng-container *ngIf="!loading">{{'Получить код в Telegram' | translate}}</ng-container>
-        <ng-container *ngIf="loading"><ion-spinner></ion-spinner></ng-container>
-      </button> -->
 
-
-      <button class="support-btn" *ngIf="codeon && timer === 0" (click)="signIn(true)"
-        style="background-color: #00ABF1FF;margin: 30px 0;display: flex;align-items: center;justify-content:
-        center;gap:10px">
-        <img *ngIf="!loading" src="assets/img/tg.svg" alt="">
+      <button class="support-btn" *ngIf="codeon && timer === 0 && isTelegram" (click)="signIn(true)" >
+        <!-- <img *ngIf="!loading" src="assets/img/tg.svg" alt=""> -->
         <ng-container *ngIf="!loading">{{'Получить код в Telegram' | translate}}</ng-container>
         <ng-container *ngIf="loading"><ion-spinner></ion-spinner></ng-container>
       </button>
-
 
       <button class="support-btn" (click)="authService.goToSupport()"><img src="assets/img/support.svg"
           alt="">{{'Обратитесь в службу поддержки' | translate}}</button>

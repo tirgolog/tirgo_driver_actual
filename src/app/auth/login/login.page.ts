@@ -17,6 +17,7 @@ import { log } from 'console';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage{
+  isTelegram: boolean = false;
   phone:string = '';
   //phone:string = '(93) 542-13-24';
   code:string = '';
@@ -78,12 +79,13 @@ export class LoginPage{
     return this.httpClient.get("./assets/json/phone.json");
   }
   back(){
-    this.navCtrl.back()
+    this.navCtrl.back();
   }
   async recoverLogin(){
     await this.router.navigate(['recoverlogin']);
   }
   async signIn(isTelegram){
+    this.isTelegram = isTelegram; 
     this.loading = true;
     if (this.phone.length < this.mask.length){
       await this.authService.alert('Ошибка','Введите корректный номер телефона')
