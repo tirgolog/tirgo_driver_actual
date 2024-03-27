@@ -7,10 +7,6 @@ import {AppComponent} from "../../app.component";
 import {Observable} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 
-import { Diagnostic} from '@ionic-native/diagnostic/ngx/index';
-import { log } from 'console';
-
-
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -79,7 +75,8 @@ export class LoginPage{
     return this.httpClient.get("./assets/json/phone.json");
   }
   back(){
-    this.navCtrl.back();
+    this.router.navigate(['selectlanguage'])
+    // this.navCtrl.back();
   }
   async recoverLogin(){
     await this.router.navigate(['recoverlogin']);
