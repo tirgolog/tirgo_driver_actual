@@ -107,7 +107,7 @@ export class LoginPage{
                 if (this.timer > 0){
                   this.timer = this.timer - 1
                 }
-              }, 50);
+              }, 1000);
             }
             this.error = false;
           })
