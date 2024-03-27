@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android:exported="true" id="io.tirgo.drive" version="0.0.14" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+<widget android:exported="true" id="io.tirgo.drive" version="0.0.15" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
     <name>Tirgo Driver</name>
     <description>Tirgo Driver app.</description>
     <author>team</author>

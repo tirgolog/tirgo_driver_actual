@@ -59,9 +59,14 @@
         <ng-container *ngIf="loading"><ion-spinner></ion-spinner></ng-container>
       </button>
 
+      <button class="support-btn" *ngIf="codeon && timer === 0 && isTelegram" (click)="signIn(true)" style="background-color: #00ABF1FF">
+        <ng-container *ngIf="!loading">{{'Получить код в Telegram' | translate}}</ng-container>
+        <ng-container *ngIf="loading"><ion-spinner></ion-spinner></ng-container>
+      </button>
+
       <button *ngIf="codeon && isTelegram" class="reg-btn " (click)="authService.goToVerifyCodeTg()"
-        style="background-color: #00ABF1FF;margin: 30px 0;display: flex;align-items: center;justify-content: center;gap:10px">
-        <span style="width: none !important;">{{'Перейти в телеграмму' | translate}}</span>
+        style="background-color: #00ABF1FF;margin: 20px 0;display: flex;align-items: center;justify-content: center;gap:10px">
+        <span style="width: none !important;">{{'Перейти в Telegram' | translate}}</span>
       </button>
 
       <button class="classic-btn" *ngIf="codeon && timer === 0 && !isTelegram" (click)="signIn(false)">
@@ -69,11 +74,7 @@
         <ng-container *ngIf="loading"><ion-spinner></ion-spinner></ng-container>
       </button>
 
-      <button class="support-btn" *ngIf="codeon && timer === 0 && isTelegram" (click)="signIn(true)" >
-        <!-- <img *ngIf="!loading" src="assets/img/tg.svg" alt=""> -->
-        <ng-container *ngIf="!loading">{{'Получить код в Telegram' | translate}}</ng-container>
-        <ng-container *ngIf="loading"><ion-spinner></ion-spinner></ng-container>
-      </button>
+      
 
       <button class="support-btn" (click)="authService.goToSupport()"><img src="assets/img/support.svg"
           alt="">{{'Обратитесь в службу поддержки' | translate}}</button>
